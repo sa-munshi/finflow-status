@@ -1,9 +1,15 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
+const { Resend } = require("resend");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// ── Resend SDK (email provider) ──
+const resend = new Resend(process.env.RESEND_API_KEY);
+const FROM_EMAIL = process.env.FROM_EMAIL || "noreply@app.sadabmunshi.online";
 
 app.use(cors());
 app.use(express.json());
@@ -38,12 +44,83 @@ const serviceState = SERVICES.map((svc) => ({
   lastStatus: null,
 }));
 
-// ── Email subscribers ──
-// TODO: replace with persistent DB storage
-const subscribers = [];
+// ── Persistent subscriber storage ──
+const SUBSCRIBERS_FILE = path.join(__dirname, "subscribers.json");
+
+function loadSubscribers() {
+  try {
+    if (fs.existsSync(SUBSCRIBERS_FILE)) {
+      const data = fs.readFileSync(SUBSCRIBERS_FILE, "utf-8");
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (err) {
+    console.error("Failed to load subscribers.json:", err.message);
+  }
+  return [];
+}
+
+function saveSubscribers() {
+  try {
+    fs.writeFileSync(SUBSCRIBERS_FILE, JSON.stringify(subscribers, null, 2), "utf-8");
+  } catch (err) {
+    console.error("Failed to save subscribers.json:", err.message);
+  }
+}
+
+const subscribers = loadSubscribers();
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// ── Send status alert email to all subscribers ──
+async function sendStatusAlert(serviceName, serviceUrl, newStatus) {
+  if (subscribers.length === 0) return;
+
+  const isUp = newStatus === true;
+  const subject = isUp
+    ? `✅ UP: ${serviceName} has recovered`
+    : `🚨 DOWN: ${serviceName} is down`;
+  const statusText = isUp ? "Recovered (UP)" : "Down (DOWN)";
+  const statusColor = isUp ? "#1a7f37" : "#cf222e";
+  const statusEmoji = isUp ? "✅" : "🚨";
+  const timestamp = new Date().toLocaleString("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
+  const statusPageUrl = process.env.STATUS_PAGE_URL || `http://localhost:${PORT}`;
+
+  for (const subscriber of subscribers) {
+    const email = typeof subscriber === "string" ? subscriber : subscriber.email;
+    if (!email) continue;
+
+    const unsubscribeUrl = `${statusPageUrl.replace(/\/$/, "")}/api/unsubscribe?email=${encodeURIComponent(email)}`;
+
+    try {
+      await resend.emails.send({
+        from: FROM_EMAIL,
+        to: email,
+        subject,
+        html: `
+          <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px">
+            <h2 style="color:${statusColor}">${statusEmoji} ${serviceName} — ${statusText}</h2>
+            <p><strong>Service:</strong> ${serviceName}</p>
+            <p><strong>Status:</strong> ${statusText}</p>
+            <p><strong>Time:</strong> ${timestamp}</p>
+            <hr style="border:none;border-top:1px solid #e1e4e8;margin:20px 0">
+            <p style="font-size:12px;color:#57606a">
+              You are receiving this because you subscribed to FinFlow status alerts.<br>
+              <a href="${unsubscribeUrl}">Unsubscribe</a>
+            </p>
+          </div>
+        `,
+      });
+    } catch (err) {
+      console.error(`Failed to send email to ${email}:`, err.message);
+    }
+  }
 }
 
 // ── Robust ping ──
@@ -120,12 +197,15 @@ async function checkAllServices() {
     svc.history.push(entry);
     svc.lastStatus = success;
 
-    // ── Status change detection ──
+    // ── Bi-directional status change detection ──
     if (prevStatus !== null && prevStatus !== success) {
       const stateText = success ? "recovered to UP" : "changed to DOWN";
       console.log(
-        `ALERT: ${svc.displayName} ${stateText} — would notify ${subscribers.length} subscriber(s)`
+        `ALERT: ${svc.displayName} ${stateText} — notifying ${subscribers.length} subscriber(s)`
       );
+      sendStatusAlert(svc.displayName, svc.url, success).catch((err) => {
+        console.error(`Error sending status alerts for ${svc.displayName}:`, err.message);
+      });
     }
   }
 }
@@ -253,11 +333,51 @@ app.post("/api/subscribe", (req, res) => {
   if (!email || !isValidEmail(email)) {
     return res.status(400).json({ success: false, message: "Invalid email address" });
   }
-  if (subscribers.includes(email)) {
+  const normalizedEmail = email.toLowerCase().trim();
+  const exists = subscribers.some(
+    (s) => (typeof s === "string" ? s : s.email).toLowerCase() === normalizedEmail
+  );
+  if (exists) {
     return res.status(409).json({ success: false, message: "Already subscribed" });
   }
-  subscribers.push(email);
+  subscribers.push({ email: normalizedEmail, services: "all", date: new Date().toISOString() });
+  saveSubscribers();
   return res.json({ success: true, message: "Subscribed successfully" });
+});
+
+app.delete("/api/unsubscribe", (req, res) => {
+  const { email } = req.body || {};
+  if (!email || !isValidEmail(email)) {
+    return res.status(400).json({ success: false, message: "Invalid email address" });
+  }
+  const normalizedEmail = email.toLowerCase().trim();
+  const index = subscribers.findIndex(
+    (s) => (typeof s === "string" ? s : s.email).toLowerCase() === normalizedEmail
+  );
+  if (index === -1) {
+    return res.status(404).json({ success: false, message: "Email not found" });
+  }
+  subscribers.splice(index, 1);
+  saveSubscribers();
+  return res.json({ success: true, message: "Unsubscribed successfully" });
+});
+
+// Support GET-based unsubscribe from email links
+app.get("/api/unsubscribe", (req, res) => {
+  const email = req.query.email;
+  if (!email || !isValidEmail(email)) {
+    return res.status(400).send("Invalid email address");
+  }
+  const normalizedEmail = email.toLowerCase().trim();
+  const index = subscribers.findIndex(
+    (s) => (typeof s === "string" ? s : s.email).toLowerCase() === normalizedEmail
+  );
+  if (index === -1) {
+    return res.send("Email not found or already unsubscribed.");
+  }
+  subscribers.splice(index, 1);
+  saveSubscribers();
+  return res.send("You have been unsubscribed from FinFlow status alerts.");
 });
 
 // Initial check, then recurring interval
