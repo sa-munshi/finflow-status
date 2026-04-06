@@ -13,19 +13,17 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 /* ── Container (mobile-first) ── */
 .container{max-width:100%;padding:0 16px}
 
-/* ── Header (sticky) ── */
-.header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #e1e4e8;padding:12px 0 6px;margin:0 -16px 24px}
+/* ── Header ── */
+.header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:#fff;border-bottom:1px solid #e1e4e8;position:static}
 .logo-row{display:flex;align-items:center;gap:8px}
 .logo-img{width:32px;height:32px;border-radius:6px}
-.brand{font-size:20px;font-weight:700;color:#24292f}
+.brand{font-size:18px;font-weight:700;color:#24292f}
 .brand-muted{font-weight:500;color:#57606a}
-.header-meta{font-size:12px;color:#57606a;line-height:1.4}
-.meta-right{display:flex;align-items:baseline;gap:4px}
-.meta-right div{white-space:nowrap}
-.meta-right>#countdown{white-space:nowrap}
+.subscribe-btn{background:#24292f;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:background .2s;font-family:inherit}
+.subscribe-btn:hover{background:#444}
 
 /* ── Hero ── */
-.hero{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border:1px solid #e1e4e8;padding:32px;display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;text-align:center;flex-wrap:wrap;transition:background .3s ease,border-color .3s ease}
+.hero{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border:1px solid #e1e4e8;padding:32px;display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:8px;text-align:center;flex-wrap:wrap;transition:background .3s ease,border-color .3s ease}
 .hero.operational{background:#dafbe1;border-color:rgba(26,127,55,0.25)}
 .hero.degraded{background:#fff8c5;border-color:rgba(191,135,0,0.25)}
 .hero.down{background:#ffebe9;border-color:rgba(207,34,46,0.25)}
@@ -35,6 +33,9 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 .hero.down .hero-circle{background:#cf222e;box-shadow:0 0 16px rgba(207,34,46,.4)}
 .hero-text{font-size:24px;font-weight:700}
 .hero-sub{width:100%;font-size:15px;color:#57606a;margin-top:4px}
+
+/* ── Update bar ── */
+.update-bar{text-align:center;font-size:12px;color:#8c959f;margin:8px 0 16px}
 
 /* ── Services ── */
 .section-title{font-size:16px;font-weight:700;margin-bottom:12px;color:#24292f}
@@ -64,11 +65,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 /* Axis labels */
 .axis-row{display:flex;justify-content:space-between;padding:0 0 0 0;font-size:11px;color:#57606a;margin-top:4px}
 
-/* ── Floating subscribe button ── */
-.fab-subscribe{position:fixed;bottom:24px;right:24px;z-index:100;background:#1a7f37;color:#fff;border:none;border-radius:50px;padding:14px 22px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;box-shadow:0 4px 12px rgba(26,127,55,.35);display:flex;align-items:center;gap:8px;transition:transform .2s,box-shadow .2s;white-space:nowrap}
-.fab-subscribe:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(26,127,55,.4)}
-.fab-subscribe:active{transform:translateY(0)}
-
 /* ── Modal ── */
 .modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .25s ease}
 .modal-overlay.open{display:flex;opacity:1}
@@ -93,14 +89,11 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 .modal-close-btn:hover{background:#e1e4e8}
 
 /* ── Footer ── */
-.footer{text-align:center;padding:32px 0 0;font-size:13px;color:#57606a;border-top:1px solid #e1e4e8;margin-top:32px}
-.footer a{color:#57606a;text-decoration:none;transition:color .2s}
-.footer a:hover{color:#24292f;text-decoration:underline}
+.footer{text-align:center;padding:24px 0;font-size:13px;color:#8c959f}
 
 /* ── Tablet ── */
 @media (min-width:600px){
   .container{max-width:640px;margin:0 auto;padding:0 24px}
-  .header{margin-left:-24px;margin-right:-24px}
   .hero{padding:40px}
   .hero-text{font-size:28px}
   .svc-icon{width:32px;height:32px}
@@ -109,24 +102,20 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 /* ── Desktop ── */
 @media (min-width:1024px){
   .container{max-width:780px;padding:0 32px}
-  .header{margin-left:-32px;margin-right:-32px;display:flex;align-items:center;justify-content:space-between;padding:12px 0}
-  .header .logo-row{flex-shrink:0}
-  .header .meta-right{justify-content:flex-end}
-  .meta-right div{font-size:13px;line-height:1.6}
+  .header{padding:20px 32px}
   .hero{padding:48px}
 }
 
 /* ── Mobile < 480px ── */
 @media (max-width:480px){
-  .header{padding:12px 0 6px}
-  .header-meta{display:none}
-  .meta-right{font-size:12px;gap:6px}
+  .header{padding:16px 16px;gap:8px}
+  .brand{font-size:16px}
+  .subscribe-btn{padding:8px 14px;font-size:11px}
   .hero{padding:20px}
   .hero-text{font-size:18px}
   .hero-sub{font-size:13px}
   .svc-card{padding:16px}
   .bars-container{height:36px;margin:10px 0 2px}
-  .fab-subscribe{bottom:16px;right:16px;padding:12px 18px;font-size:13px}
   /* Mobile modal as bottom sheet */
   .modal-overlay{padding:0;align-items:flex-end;justify-content:stretch}
   .modal-card{width:100%;max-width:100%;border-radius:20px 20px 0 0;padding:28px 20px 20px;margin-bottom:0}
@@ -136,16 +125,13 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 <body>
 <div class="container">
   <!-- Header -->
-  <div class="header">
+  <header class="header">
     <div class="logo-row">
       <img class="logo-img" src="https://app.sadabmunshi.online/favicon.ico" alt="" onerror="this.style.display='none'">
       <span><span class="brand">FinFlow</span> <span class="brand-muted">Status</span></span>
     </div>
-    <div class="meta-right">
-      <div id="last-updated">Checking…</div>
-      <div id="countdown">Next update in 60s</div>
-    </div>
-  </div>
+    <button class="subscribe-btn" id="header-subscribe">Subscribe to Updates</button>
+  </header>
 
   <!-- Hero -->
   <div class="hero operational" id="hero">
@@ -153,21 +139,15 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
     <div class="hero-text" id="hero-text">All Systems Operational</div>
     <div class="hero-sub" id="hero-sub">All monitored services are online</div>
   </div>
+  <div class="update-bar" id="update-bar">Checking…</div>
 
   <!-- Services -->
   <div class="section-title">Services</div>
   <div id="services"></div>
 
   <!-- Footer -->
-  <div class="footer">
-    <a href="#">Privacy Policy</a> &middot; <a href="#">Terms of Service</a> &middot; <a href="#">Powered by FinFlow</a>
-  </div>
+  <div class="footer">Powered by FinFlow</div>
 </div>
-
-<!-- Floating Subscribe Button -->
-<button class="fab-subscribe" id="fab-subscribe" aria-label="Subscribe to notifications">
-  <span aria-hidden="true">🔔</span> Subscribe
-</button>
 
 <!-- Subscribe Modal -->
 <div class="modal-overlay" id="modal-overlay">
@@ -207,7 +187,6 @@ const ICONS = {
   telegram: '<svg class="svc-icon" viewBox="0 0 24 24" fill="none"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.04 9.613c-.15.668-.543.83-1.099.517l-3.037-2.237-1.465 1.41c-.162.162-.298.298-.61.298l.218-3.088 5.625-5.082c.244-.218-.054-.338-.379-.12L7.086 14.748l-2.99-.934c-.65-.203-.663-.65.136-.962l11.679-4.504c.541-.196 1.015.132.651.9z" fill="#229ED9"/></svg>'
 };
 const SVC_KEYS = ["web","whatsapp","telegram"];
-const BAR_COUNT = 30;
 const COUNTDOWN_SEC = 60;
 let countdownVal = COUNTDOWN_SEC;
 let countdownTimer = null;
@@ -215,15 +194,12 @@ let fetching = false;
 
 const $ = (s) => document.querySelector(s);
 
-function formatLastUpdated(iso) {
+function formatTimeShort(iso) {
   const d = new Date(iso);
   const h = d.getHours().toString().padStart(2,'0');
   const m = d.getMinutes().toString().padStart(2,'0');
-  const s = d.getSeconds().toString().padStart(2,'0');
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const mo = months[d.getMonth()];
-  const day = d.getDate();
-  return `Last updated: ${h}:${m}:${s} \u00b7 ${mo} ${day}`;
+  return `${h}:${m} \u00b7 ${months[d.getMonth()]} ${d.getDate()}`;
 }
 
 function encodeServiceName(name) {
@@ -252,7 +228,7 @@ function renderBars24h(bars24h) {
       const slotEnd = new Date(Date.now() - (29 - index) * slotMins * 60000);
       const slotStart = new Date(slotEnd.getTime() - slotMins * 60000);
       const pct = bars24h._pct ? bars24h._pct[index] : '?';
-      tipData = `${fmt(slotStart)}\u2013${fmt(slotEnd)} \u00b7 \u26a0 Partial (${pct} up)`;
+      tipData = `${fmt(slotStart)}\u2013${fmt(slotEnd)} \u00b7 \u26a0 Partial (${pct}% up)`;
     } else if (slot === 'down') {
       bar.classList.add('down');
       const slotEnd = new Date(Date.now() - (29 - index) * slotMins * 60000);
@@ -304,9 +280,6 @@ function renderBars24h(bars24h) {
 }
 
 function render(data) {
-  // Header
-  $("#last-updated").textContent = formatLastUpdated(data.lastUpdated);
-
   // Hero
   const hero = $("#hero");
   hero.className = "hero " + data.overall;
@@ -317,9 +290,12 @@ function render(data) {
     $("#hero-text").textContent = "Some Systems Down";
     $("#hero-sub").textContent = "Some services are experiencing issues";
   } else {
-    $("#hero-text").textContent = "Some Systems Down";
-    $("#hero-sub").textContent = "Some services are experiencing issues";
+    $("#hero-text").textContent = "All Systems Down";
+    $("#hero-sub").textContent = "All monitored services are offline";
   }
+
+  // Update bar below hero
+  $("#update-bar").textContent = `Last updated: ${formatTimeShort(data.lastUpdated)} \u00b7 Next update in ${countdownVal}s`;
 
   // Services
   const svcEl = $("#services");
@@ -405,20 +381,20 @@ function resetCountdown() {
 function startCountdown() {
   if (countdownTimer) clearInterval(countdownTimer);
   countdownVal = COUNTDOWN_SEC;
-  $("#countdown").textContent = "Next update in " + countdownVal + "s";
   countdownTimer = setInterval(() => {
     countdownVal--;
     if (countdownVal <= 0) {
       fetchStatus();
     } else {
-      $("#countdown").textContent = "Next update in " + countdownVal + "s";
+      const bar = $("#update-bar");
+      if (bar) bar.textContent = bar.textContent.replace(/Next update in \d+s/, `Next update in ${countdownVal}s`);
     }
   }, 1000);
 }
 
 // ── Modal ──
 const overlay = $("#modal-overlay");
-const fabBtn = $("#fab-subscribe");
+const headerBtn = $("#header-subscribe");
 const modalClose = $("#modal-close");
 const modalForm = $("#modal-sub-form");
 const modalInput = $("#modal-input");
@@ -442,7 +418,7 @@ function closeModal() {
   document.body.style.overflow = "";
 }
 
-fabBtn.addEventListener("click", openModal);
+headerBtn.addEventListener("click", openModal);
 modalClose.addEventListener("click", closeModal);
 successClose.addEventListener("click", closeModal);
 overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
