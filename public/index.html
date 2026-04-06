@@ -45,6 +45,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 .svc-icon{width:28px;height:28px;flex-shrink:0}
 .svc-name{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .svc-uptime{font-size:13px;color:#57606a;font-variant-numeric:tabular-nums;justify-self:end}
+.svc-uptime-sub{font-size:10px;color:#8c959f;display:block;margin-top:-2px}
 .svc-status-text{font-size:13px;font-weight:600;display:flex;align-items:center;gap:4px}
 .svc-status-text.operational{color:#1a7f37}
 .svc-status-text.down{color:#cf222e}
@@ -61,6 +62,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 .spark-bar{flex:1;min-width:4px;max-width:14px;height:100%;border-radius:3px;background:#d0d7de;position:relative;cursor:help;transition:opacity .2s,height .3s,background .3s}
 .spark-bar.up{background:#1a7f37}
 .spark-bar.down{background:#cf222e}
+.spark-bar.unknown{background:#d0d7de}
 
 /* Tooltip */
 .spark-bar .tip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;font-size:11px;padding:5px 9px;border-radius:6px;white-space:nowrap;z-index:10;pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,.18);line-height:1.4}
@@ -245,19 +247,30 @@ function formatLastUpdated(iso) {
   return `Last updated: ${h}:${m}:${s} \u00b7 ${mo} ${day}`;
 }
 
-function renderBars(history) {
-  const bars = [];
-  const pad = BAR_COUNT - history.length;
-  for (let i = 0; i < pad; i++) {
-    bars.push('<div class="spark-bar"><span class="tip">Awaiting check</span></div>');
-  }
-  history.forEach((h) => {
-    const cls = h.success ? "up" : "down";
-    const result = h.success ? "Operational" : "Down";
-    const height = h.success ? "100%" : "60%";
-    bars.push(`<div class="spark-bar ${cls}" style="height:${height}"><span class="tip">${formatTimeFull(h.timestamp)} &middot; ${result}</span></div>`);
-  });
-  return bars.join("");
+function formatSlotTime(slotIndex) {
+  // slot 0 = 24h ago, slot 29 = now; each slot = 48 min
+  const now = new Date();
+  const slotMs = (24 * 60 * 60 * 1000) / 30;
+  const slotEnd = new Date(now.getTime() - (29 - slotIndex) * slotMs);
+  const slotStart = new Date(slotEnd.getTime() - slotMs);
+  const hh = (d) => d.getHours().toString().padStart(2, '0');
+  const mm = (d) => d.getMinutes().toString().padStart(2, '0');
+  return `~${hh(slotStart)}:${mm(slotStart)}\u2013${hh(slotEnd)}:${mm(slotEnd)}`;
+}
+
+function renderBars24h(bars24h) {
+  return bars24h.map((slot, i) => {
+    let cls = 'unknown';
+    let result = 'No data';
+    if (slot === 'up') { cls = 'up'; result = 'Operational'; }
+    else if (slot === 'down') { cls = 'down'; result = 'Down'; }
+    const tip = `<span class="tip">${formatSlotTime(i)} &middot; ${result}</span>`;
+    return `<div class="spark-bar ${cls}">${tip}</div>`;
+  }).join("");
+}
+
+function encodeServiceName(name) {
+  return encodeURIComponent(name.replace(/ /g, " "));
 }
 
 function render(data) {
@@ -285,20 +298,19 @@ function render(data) {
     const svc = data.services[i];
     const statusClass = svc.status;
     const statusText = statusClass === "operational" ? "Operational" : "Down";
-    const hist = svc.history;
-    const oldestLabel = hist.length > 1 ? formatTimeFull(hist[0].timestamp) : "30 days ago";
-    const newestLabel = hist.length > 0 ? "Today" : "Today";
+    const historyUrl = `/history?service=${encodeServiceName(svc.name)}`;
     const card = document.createElement("div");
     card.className = "svc-card";
     card.innerHTML = `
       <div class="svc-header">
         ${ICONS[key]}
         <span class="svc-name">${svc.name}</span>
-        <span class="svc-uptime">${svc.uptimePercent}%</span>
+        <span class="svc-uptime">${svc.uptimePercent}%<span class="svc-uptime-sub">(24h)</span></span>
         <span class="svc-status-text ${statusClass}"><span class="status-dot"></span>${statusText}</span>
       </div>
-      <div class="bars-container">${renderBars(hist.slice(-BAR_COUNT))}</div>
-      <div class="axis-row"><span>${oldestLabel}</span><span>${newestLabel}</span></div>
+      <div class="bars-container">${renderBars24h(svc.bars24h)}</div>
+      <div class="axis-row"><span>24 hours ago</span><span>Now</span></div>
+      <a href="${historyUrl}" style="font-size:12px;color:#57606a;text-decoration:none;display:block;text-align:right;margin-top:4px;">View 90-day history &rarr;</a>
     `;
     svcEl.appendChild(card);
   });

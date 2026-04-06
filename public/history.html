@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinFlow History</title>
+<link rel="icon" href="https://app.sadabmunshi.online/favicon.ico" type="image/x-icon">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;color:#24292f;min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+/* ── Container (mobile-first) ── */
+.container{max-width:100%;padding:0 16px}
+
+/* ── Header (sticky) ── */
+.header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #e1e4e8;padding:12px 0 6px;margin:0 -16px 24px}
+.logo-row{display:flex;align-items:center;gap:8px}
+.logo-img{width:32px;height:32px;border-radius:6px}
+.brand{font-size:20px;font-weight:700;color:#24292f}
+.brand-muted{font-weight:500;color:#57606a}
+
+/* ── Back link ── */
+.back-link{display:inline-block;font-size:13px;color:#57606a;text-decoration:none;margin-bottom:16px;transition:color .2s}
+.back-link:hover{color:#24292f;text-decoration:underline}
+
+/* ── Title area ── */
+.history-title{font-size:20px;font-weight:700;margin-bottom:8px}
+.overall-badge{display:inline-flex;align-items:center;gap:6px;background:#dafbe1;color:#1a7f37;border:1px solid rgba(26,127,55,.25);border-radius:6px;padding:6px 12px;font-size:13px;font-weight:600;margin-bottom:24px}
+.overall-badge.warning{background:#fff8c5;color:#9a6700;border-color:rgba(154,103,0,.25)}
+.overall-badge.critical{background:#ffebe9;color:#cf222e;border-color:rgba(207,34,46,.25)}
+
+/* ── Day rows ── */
+.day-row{background:#fff;border:1px solid #e1e4e8;border-radius:8px;margin-bottom:4px;padding:10px 12px;cursor:pointer;transition:background .15s}
+.day-row:hover{background:#f6f8fa}
+.day-row-header{display:flex;align-items:center;gap:8px;font-size:13px}
+.day-date{font-weight:600;min-width:70px;color:#24292f;flex-shrink:0}
+.day-bar-track{flex:1;height:12px;background:#e1e4e8;border-radius:6px;overflow:hidden}
+.day-bar-fill{height:100%;border-radius:6px;transition:width .3s}
+.day-bar-fill.full{background:#1a7f37}
+.day-bar-fill.warn{background:#9a6700}
+.day-bar-fill.bad{background:#cf222e}
+.day-pct{font-size:12px;font-weight:600;min-width:55px;text-align:right;font-variant-numeric:tabular-nums}
+.day-pct.full{color:#1a7f37}
+.day-pct.warn{color:#9a6700}
+.day-pct.bad{color:#cf222e}
+.day-expand{display:none;margin-top:8px;padding-top:8px;border-top:1px solid #e1e4e8;font-size:12px;color:#57606a}
+.day-expand.open{display:block}
+.day-check{display:flex;align-items:center;gap:6px;padding:2px 0}
+.day-check .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.day-check .dot.up{background:#1a7f37}
+.day-check .dot.down{background:#cf222e}
+.no-data-msg{text-align:center;padding:40px 0;color:#57606a;font-size:15px}
+
+/* ── Loading spinner ── */
+.loading{text-align:center;padding:40px 0}
+.loading .spinner{width:24px;height:24px;border:3px solid #e1e4e8;border-top-color:#0969da;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Footer ── */
+.footer{text-align:center;padding:32px 0 0;font-size:13px;color:#57606a;border-top:1px solid #e1e4e8;margin-top:32px}
+.footer a{color:#57606a;text-decoration:none;transition:color .2s}
+.footer a:hover{color:#24292f;text-decoration:underline}
+
+/* ── Tablet ── */
+@media (min-width:600px){
+  .container{max-width:640px;margin:0 auto;padding:0 24px}
+  .header{margin-left:-24px;margin-right:-24px}
+  .day-row{padding:12px 16px}
+}
+
+/* ── Desktop ── */
+@media (min-width:1024px){
+  .container{max-width:780px;padding:0 32px}
+  .header{margin-left:-32px;margin-right:-32px}
+}
+
+/* ── Mobile ── */
+@media (max-width:480px){
+  .container{padding:0 16px}
+  .header{padding:12px 0 6px}
+  .day-date{min-width:55px;font-size:12px}
+  .day-pct{min-width:50px;font-size:11px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-row">
+      <img class="logo-img" src="https://app.sadabmunshi.online/favicon.ico" alt="" onerror="this.style.display='none'">
+      <span><span class="brand">FinFlow</span> <span class="brand-muted">History</span></span>
+    </div>
+  </div>
+
+  <a href="/" class="back-link">&larr; Back to Status</a>
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    Loading history…
+  </div>
+
+  <div id="content" style="display:none">
+    <div class="history-title" id="history-title">—</div>
+    <div class="overall-badge" id="overall-badge">
+      <span id="overall-text">—</span>
+    </div>
+    <div id="days"></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <a href="#">Privacy Policy</a> &middot; <a href="#">Terms of Service</a> &middot; <a href="https://app.sadabmunshi.online">FinFlow</a>
+  </div>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+
+function getParam(key) {
+  return new URLSearchParams(window.location.search).get(key);
+}
+
+function dateLabel(dateStr) {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const parts = dateStr.split('-');
+  const m = parseInt(parts[1], 10) - 1;
+  const d = parseInt(parts[2], 10);
+
+  const today = new Date();
+  const thatDay = new Date(parseInt(parts[0]), m, d);
+  const diff = Math.floor((today - thatDay) / (24 * 60 * 60 * 1000));
+
+  if (diff === 0) return 'Today';
+  if (diff === 1) return 'Yesterday';
+  return `${months[m]} ${d}`;
+}
+
+function barClass(pct) {
+  if (pct >= 100) return 'full';
+  if (pct >= 90) return 'warn';
+  return 'bad';
+}
+
+function renderChecks(day) {
+  if (day.totalChecks === 0) return '<div style="color:#8c959f">No checks recorded</div>';
+  // We only have aggregates, not individual checks for history page
+  // Show summary
+  const down = day.totalChecks - day.successChecks;
+  let summary = `${day.totalChecks} checks, all operational`;
+  if (down > 0) summary = `${day.totalChecks} checks, ${down} failed`;
+  return `<div style="display:flex;gap:16px">
+    <span>${day.successChecks} up</span>
+    <span>${down} down</span>
+  </div>`;
+}
+
+function renderDay(row, i) {
+  const cls = barClass(parseFloat(row.uptimePct));
+  const width = `${row.uptimePct}%`;
+
+  return `
+    <div class="day-row" data-idx="${i}">
+      <div class="day-row-header">
+        <span class="day-date">${dateLabel(row.date)}</span>
+        <div class="day-bar-track"><div class="day-bar-fill ${cls}" style="width:${width}"></div></div>
+        <span class="day-pct ${cls}">${row.uptimePct}%</span>
+      </div>
+      <div class="day-expand" id="expand-${i}">
+        ${renderChecks(row)}
+      </div>
+    </div>`;
+}
+
+async function loadHistory() {
+  const serviceName = getParam('service');
+  if (!serviceName) {
+    $('#loading').innerHTML = 'No service specified. <a href="/history?service=FinFlow%20Web">View FinFlow Web history</a>';
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/history?service=${encodeURIComponent(serviceName)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    if (!data || data.length === 0) {
+      $('#loading').innerHTML = '<div class="no-data-msg">No history data available yet.</div>';
+      return;
+    }
+
+    // Overall 90-day uptime
+    const totalChecks = data.reduce((s, d) => s + d.totalChecks, 0);
+    const totalUp = data.reduce((s, d) => s + d.successChecks, 0);
+    const overallPct = totalChecks > 0 ? ((totalUp / totalChecks) * 100).toFixed(1) : '100.0';
+
+    const badge = $('#overall-badge');
+    const pctNum = parseFloat(overallPct);
+    if (pctNum >= 99.9) {
+      badge.className = 'overall-badge';
+    } else if (pctNum >= 99) {
+      badge.className = 'overall-badge warning';
+    } else {
+      badge.className = 'overall-badge critical';
+    }
+    $('#overall-text').textContent = `${overallPct}% uptime over last 90 days`;
+
+    // Title
+    const svcName = decodeURIComponent(serviceName);
+    $('#history-title').textContent = `${svcName} — 90 Day History`;
+
+    // Days grid — already newest first from API
+    const daysEl = $('#days');
+    daysEl.innerHTML = data.map(renderDay).join('');
+
+    // Click to expand
+    document.querySelectorAll('.day-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const idx = row.getAttribute('data-idx');
+        const expand = document.getElementById(`expand-${idx}`);
+        expand.classList.toggle('open');
+      });
+    });
+
+    $('#loading').style.display = 'none';
+    $('#content').style.display = 'block';
+  } catch (e) {
+    console.error('Failed to load history:', e);
+    $('#loading').innerHTML = `Failed to load history. <a href="/">Back to Status</a>`;
+  }
+}
+
+loadHistory();
+</script>
+</body>
+</html>

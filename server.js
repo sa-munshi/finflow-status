@@ -28,7 +28,7 @@ const SERVICES = [
   },
 ];
 
-const MAX_HISTORY = 30;
+const HISTORY_RETENTION_DAYS = 90;
 const PING_INTERVAL_SEC = 180;
 
 // ── In-memory store ──
@@ -68,6 +68,39 @@ async function pingService(url) {
   }
 }
 
+// ── 24-hour bar buckets ──
+function get24hBars(history) {
+  const now = Date.now();
+  const windowMs = 24 * 60 * 60 * 1000;
+  const slotMs = windowMs / 30;
+  const bars = [];
+
+  for (let i = 29; i >= 0; i--) {
+    const slotEnd = now - i * slotMs;
+    const slotStart = slotEnd - slotMs;
+
+    const checksInSlot = history.filter(h => {
+      const t = new Date(h.timestamp).getTime();
+      return t >= slotStart && t < slotEnd;
+    });
+
+    if (checksInSlot.length === 0) {
+      bars.push("unknown");
+    } else if (checksInSlot.every(h => h.success)) {
+      bars.push("up");
+    } else {
+      bars.push("down");
+    }
+  }
+  return bars;
+}
+
+// ── Last 24h checks helper ──
+function getLast24hChecks(history) {
+  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+  return history.filter(h => new Date(h.timestamp).getTime() > cutoff);
+}
+
 async function checkAllServices() {
   for (const svc of serviceState) {
     const success = await pingService(svc.url);
@@ -75,13 +108,9 @@ async function checkAllServices() {
     const prevStatus = svc.lastStatus;
 
     svc.history.push(entry);
-    if (svc.history.length > MAX_HISTORY) {
-      svc.history.shift();
-    }
     svc.lastStatus = success;
 
     // ── Status change detection ──
-    // TODO: wire up nodemailer / Resend to notify actual subscribers
     if (prevStatus !== null && prevStatus !== success) {
       const stateText = success ? "recovered to UP" : "changed to DOWN";
       console.log(
@@ -94,9 +123,14 @@ async function checkAllServices() {
 // ── Build API response (URLs never exposed) ──
 function buildStatusResponse() {
   const services = serviceState.map((svc) => {
-    const total = svc.history.length;
-    const up = svc.history.filter((h) => h.success).length;
+    const last24h = getLast24hChecks(svc.history);
+    const total = last24h.length;
+    const up = last24h.filter((h) => h.success).length;
     const uptimePercent = total > 0 ? ((up / total) * 100).toFixed(3) : "100.000";
+
+    const history30 = svc.history.slice(-30);
+    const bars24h = get24hBars(svc.history);
+
     const lastCheck = svc.history[svc.history.length - 1];
     const isUp = lastCheck ? lastCheck.success : true;
 
@@ -104,7 +138,8 @@ function buildStatusResponse() {
       name: svc.displayName,
       status: isUp ? "operational" : "down",
       uptimePercent,
-      history: svc.history,
+      bars24h,
+      history: history30,
     };
   });
 
@@ -130,9 +165,72 @@ function buildStatusResponse() {
   };
 }
 
+// ── 90-day daily history ──
+function buildDailyHistory(serviceState) {
+  const totalDays = HISTORY_RETENTION_DAYS;
+  const dayMs = 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  const todayStart = new Date(now).setHours(0, 0, 0, 0);
+  const days = [];
+
+  for (let i = 0; i < totalDays; i++) {
+    const dayStart = todayStart - i * dayMs;
+    const dayEnd = dayStart + dayMs;
+
+    const checksInDay = serviceState.history.filter(h => {
+      const t = new Date(h.timestamp).getTime();
+      return t >= dayStart && t < dayEnd;
+    });
+
+    const successChecks = checksInDay.filter(h => h.success).length;
+    const totalChecks = checksInDay.length;
+    const uptimePct = totalChecks > 0 ? ((successChecks / totalChecks) * 100).toFixed(3) : "100.000";
+
+    days.push({
+      date: new Date(dayStart).toISOString().slice(0, 10),
+      totalChecks,
+      successChecks,
+      uptimePct,
+      hasOutage: totalChecks > 0 && successChecks < totalChecks,
+    });
+  }
+
+  return days;
+}
+
+// ── Hourly cleanup: prune checks older than 90 days ──
+setInterval(() => {
+  const cutoff = Date.now() - HISTORY_RETENTION_DAYS * 24 * 60 * 60 * 1000;
+  serviceState.forEach(svc => {
+    svc.history = svc.history.filter(
+      h => new Date(h.timestamp).getTime() > cutoff
+    );
+  });
+}, 3600000);
+
 // ── Routes ──
 app.get("/api/status", (_req, res) => {
   res.json(buildStatusResponse());
+});
+
+app.get("/history", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "history.html"));
+});
+
+app.get("/api/history", (req, res) => {
+  const serviceName = req.query.service;
+  if (!serviceName) {
+    return res.status(400).json({ error: "Missing ?service= query parameter" });
+  }
+
+  const svc = serviceState.find(
+    s => s.displayName.toLowerCase() === serviceName.toLowerCase()
+  );
+  if (!svc) {
+    return res.status(404).json({ error: "Service not found" });
+  }
+
+  res.json(buildDailyHistory(svc));
 });
 
 app.get("/api/subscribers/count", (_req, res) => {
