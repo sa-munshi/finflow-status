@@ -8,32 +8,32 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;color:#24292f;min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#24292f;min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
 
-/* ── Container (mobile-first) ── */
-.container{max-width:100%;padding:0 16px}
-
-/* ── Header (sticky) ── */
-.header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #e1e4e8;padding:12px 0 6px;margin:0 -16px 24px}
+/* ── Header (full-width) ── */
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#fff;border-bottom:1px solid #e1e4e8;width:100%;box-sizing:border-box}
 .logo-row{display:flex;align-items:center;gap:8px}
 .logo-img{width:32px;height:32px;border-radius:6px}
-.brand{font-size:20px;font-weight:700;color:#24292f}
-.brand-muted{font-weight:500;color:#57606a}
+.logo-name{font-size:15px;font-weight:700;color:#24292f}
+.logo-subtitle{font-size:13px;font-weight:500;color:#57606a}
+
+/* ── Container ── */
+.container{max-width:780px;margin:0 auto;padding:0 20px}
 
 /* ── Back link ── */
-.back-link{display:inline-block;font-size:13px;color:#57606a;text-decoration:none;margin-bottom:16px;transition:color .2s}
+.back-link{display:inline-block;font-size:13px;color:#57606a;text-decoration:none;margin:16px 0 16px;transition:color .2s}
 .back-link:hover{color:#24292f;text-decoration:underline}
 
 /* ── Title area ── */
 .history-title{font-size:20px;font-weight:700;margin-bottom:8px}
-.overall-badge{display:inline-flex;align-items:center;gap:6px;background:#dafbe1;color:#1a7f37;border:1px solid rgba(26,127,55,.25);border-radius:6px;padding:6px 12px;font-size:13px;font-weight:600;margin-bottom:24px}
-.overall-badge.warning{background:#fff8c5;color:#9a6700;border-color:rgba(154,103,0,.25)}
-.overall-badge.critical{background:#ffebe9;color:#cf222e;border-color:rgba(207,34,46,.25)}
+.overall-badge{display:inline-flex;align-items:center;gap:6px;background:#d4f5e2;color:#1a7f37;border:1.5px solid #a8e6c0;border-radius:6px;padding:6px 12px;font-size:13px;font-weight:600;margin-bottom:24px}
+.overall-badge.warning{background:#fef3cd;color:#9a6700;border-color:#f5c842}
+.overall-badge.critical{background:#fde8e8;color:#cf222e;border-color:#f5a8a8}
 
 /* ── Day rows ── */
-.day-row{background:#fff;border:1px solid #e1e4e8;border-radius:8px;margin-bottom:4px;padding:10px 12px;cursor:pointer;transition:background .15s}
-.day-row:hover{background:#f6f8fa}
-.day-row-header{display:flex;align-items:center;gap:8px;font-size:13px}
+.day-row{background:#fff;border:none;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.08);margin-bottom:6px;padding:12px 16px;cursor:pointer;transition:background .15s}
+.day-row:hover{background:#f8f9fa}
+.day-row-header{display:flex;align-items:center;gap:10px;font-size:13px}
 .day-date{font-weight:600;min-width:70px;color:#24292f;flex-shrink:0}
 .day-bar-track{flex:1;height:12px;background:#e1e4e8;border-radius:6px;overflow:hidden}
 .day-bar-fill{height:100%;border-radius:6px;transition:width .3s}
@@ -44,12 +44,8 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 .day-pct.full{color:#1a7f37}
 .day-pct.warn{color:#9a6700}
 .day-pct.bad{color:#cf222e}
-.day-expand{display:none;margin-top:8px;padding-top:8px;border-top:1px solid #e1e4e8;font-size:12px;color:#57606a}
+.day-expand{display:none;margin-top:10px;padding-top:10px;font-size:12px;color:#57606a}
 .day-expand.open{display:block}
-.day-check{display:flex;align-items:center;gap:6px;padding:2px 0}
-.day-check .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.day-check .dot.up{background:#1a7f37}
-.day-check .dot.down{background:#cf222e}
 .no-data-msg{text-align:center;padding:40px 0;color:#57606a;font-size:15px}
 
 /* ── Loading spinner ── */
@@ -58,42 +54,31 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── Footer ── */
-.footer{text-align:center;padding:32px 0 0;font-size:13px;color:#57606a;border-top:1px solid #e1e4e8;margin-top:32px}
-.footer a{color:#57606a;text-decoration:none;transition:color .2s}
-.footer a:hover{color:#24292f;text-decoration:underline}
-
-/* ── Tablet ── */
-@media (min-width:600px){
-  .container{max-width:640px;margin:0 auto;padding:0 24px}
-  .header{margin-left:-24px;margin-right:-24px}
-  .day-row{padding:12px 16px}
-}
-
-/* ── Desktop ── */
-@media (min-width:1024px){
-  .container{max-width:780px;padding:0 32px}
-  .header{margin-left:-32px;margin-right:-32px}
-}
+.footer{text-align:center;padding:32px 0;font-size:13px;color:#8b949e}
 
 /* ── Mobile ── */
-@media (max-width:480px){
+@media (max-width:600px){
+  .header{padding:14px 16px}
+  .logo-name{font-size:15px}
+  .logo-subtitle{font-size:13px}
   .container{padding:0 16px}
-  .header{padding:12px 0 6px}
+  .day-row{padding:10px 12px}
   .day-date{min-width:55px;font-size:12px}
   .day-pct{min-width:50px;font-size:11px}
 }
 </style>
 </head>
 <body>
-<div class="container">
-  <!-- Header -->
-  <div class="header">
-    <div class="logo-row">
-      <img class="logo-img" src="https://app.sadabmunshi.online/favicon.ico" alt="" onerror="this.style.display='none'">
-      <span><span class="brand">FinFlow</span> <span class="brand-muted">History</span></span>
-    </div>
-  </div>
 
+<!-- Header (full-width) -->
+<header class="header">
+  <div class="logo-row">
+    <img class="logo-img" src="https://app.sadabmunshi.online/favicon.ico" alt="" onerror="this.style.display='none'">
+    <span><span class="logo-name">FinFlow</span> <span class="logo-subtitle">History</span></span>
+  </div>
+</header>
+
+<div class="container">
   <a href="/" class="back-link">&larr; Back to Status</a>
   <div id="loading" class="loading">
     <div class="spinner"></div>
@@ -108,10 +93,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
     <div id="days"></div>
   </div>
 
-  <!-- Footer -->
-  <div class="footer">
-    <a href="#">Privacy Policy</a> &middot; <a href="#">Terms of Service</a> &middot; <a href="https://app.sadabmunshi.online">FinFlow</a>
-  </div>
+  <div class="footer">Powered by FinFlow</div>
 </div>
 
 <script>
@@ -143,16 +125,9 @@ function barClass(pct) {
 }
 
 function renderChecks(day) {
-  if (day.totalChecks === 0) return '<div style="color:#8c959f">No checks recorded</div>';
-  // We only have aggregates, not individual checks for history page
-  // Show summary
   const down = day.totalChecks - day.successChecks;
-  let summary = `${day.totalChecks} checks, all operational`;
-  if (down > 0) summary = `${day.totalChecks} checks, ${down} failed`;
-  return `<div style="display:flex;gap:16px">
-    <span>${day.successChecks} up</span>
-    <span>${down} down</span>
-  </div>`;
+  if (down === 0) return `${day.totalChecks} checks, all operational`;
+  return `<span style="margin-right:16px">${day.successChecks} up</span><span>${down} down</span>`;
 }
 
 function renderDay(row, i) {
@@ -184,26 +159,33 @@ async function loadHistory() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
-    if (!data || data.length === 0) {
-      $('#loading').innerHTML = '<div class="no-data-msg">No history data available yet.</div>';
+    // Filter to only days with actual check data
+    const realDays = data.filter(day => day.totalChecks > 0);
+
+    if (realDays.length === 0) {
+      $('#loading').innerHTML = '<div class="no-data-msg">No history yet. Check back after 24 hours.</div>';
       return;
     }
 
-    // Overall 90-day uptime
-    const totalChecks = data.reduce((s, d) => s + d.totalChecks, 0);
-    const totalUp = data.reduce((s, d) => s + d.successChecks, 0);
-    const overallPct = totalChecks > 0 ? ((totalUp / totalChecks) * 100).toFixed(1) : '100.0';
+    // Overall uptime from real days only
+    const totalUp = realDays.reduce((s, d) => s + d.successChecks, 0);
+    const totalAll = realDays.reduce((s, d) => s + d.totalChecks, 0);
+    const overallPct = totalAll > 0 ? (totalUp / totalAll * 100).toFixed(1) : null;
 
-    const badge = $('#overall-badge');
-    const pctNum = parseFloat(overallPct);
-    if (pctNum >= 99.9) {
-      badge.className = 'overall-badge';
-    } else if (pctNum >= 99) {
-      badge.className = 'overall-badge warning';
+    if (overallPct === null) {
+      $('#overall-text').textContent = 'Collecting data…';
     } else {
-      badge.className = 'overall-badge critical';
+      const pctNum = parseFloat(overallPct);
+      const badge = $('#overall-badge');
+      if (pctNum >= 99.9) {
+        badge.className = 'overall-badge';
+      } else if (pctNum >= 99) {
+        badge.className = 'overall-badge warning';
+      } else {
+        badge.className = 'overall-badge critical';
+      }
+      $('#overall-text').textContent = `${overallPct}% uptime over last ${realDays.length} days`;
     }
-    $('#overall-text').textContent = `${overallPct}% uptime over last 90 days`;
 
     // Title
     const svcName = decodeURIComponent(serviceName);
@@ -211,7 +193,7 @@ async function loadHistory() {
 
     // Days grid — already newest first from API
     const daysEl = $('#days');
-    daysEl.innerHTML = data.map(renderDay).join('');
+    daysEl.innerHTML = realDays.map(renderDay).join('');
 
     // Click to expand
     document.querySelectorAll('.day-row').forEach(row => {

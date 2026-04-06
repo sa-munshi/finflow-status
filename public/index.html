@@ -10,22 +10,22 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#24292f;min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
 
-/* ── Container (mobile-first) ── */
-.container{max-width:100%;padding:0 16px}
-
-/* ── Header ── */
-.header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:#fff;box-shadow:0 1px 0 #e1e4e8;position:static}
+/* ── Header (full-width, outside container) ── */
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#fff;border-bottom:1px solid #e1e4e8;width:100%;box-sizing:border-box}
 .logo-row{display:flex;align-items:center;gap:8px}
 .logo-img{width:32px;height:32px;border-radius:6px}
-.brand{font-size:18px;font-weight:700;color:#24292f}
-.logo-subtitle{font-weight:500;color:#57606a;display:inline}
+.logo-name{font-size:15px;font-weight:700;color:#24292f}
+.logo-subtitle{font-size:13px;font-weight:500;color:#57606a}
 .subscribe-btn{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:opacity .2s;font-family:inherit}
 .subscribe-btn:hover{opacity:.85}
 .subscribe-btn-text-full{display:inline}
 .subscribe-btn-text-short{display:none}
 
+/* ── Container ── */
+.container{max-width:780px;margin:0 auto;padding:0 20px}
+
 /* ── Hero ── */
-.hero{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.08);border:none;padding:32px;display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;text-align:center;flex-wrap:wrap;transition:background .3s ease,border .3s ease}
+.hero{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.08);border:none;padding:32px;display:flex;align-items:center;justify-content:center;gap:16px;margin-top:24px;margin-bottom:24px;text-align:center;flex-wrap:wrap;transition:background .3s ease,border .3s ease}
 .hero.operational{background:linear-gradient(135deg,#d4f5e2 0%,#e8fdf0 100%);border:1.5px solid #a8e6c0}
 .hero.degraded{background:linear-gradient(135deg,#fef3cd 0%,#fff8e1 100%);border:1.5px solid #f5c842}
 .hero.down{background:linear-gradient(135deg,#fde8e8 0%,#fff0f0 100%);border:1.5px solid #f5a8a8}
@@ -38,9 +38,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f0f2f5;c
 
 /* ── Services ── */
 .section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#57606a;margin-bottom:12px}
-.svc-card{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.08);border:none;padding:20px;margin-bottom:14px;transition:translate .3s ease}
-.svc-card.operational{border-left:3px solid #1a7f37}
-.svc-card.down{border-left:3px solid #cf222e}
+.svc-card{background:#fff;border:none;box-shadow:0 2px 12px rgba(0,0,0,.08);border-radius:16px;padding:20px;margin-bottom:14px;transition:translate .3s ease}
 
 /* Service header: icon | name | status pill */
 .service-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
@@ -91,34 +89,20 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f0f2f5;c
 /* ── Footer ── */
 .footer{text-align:center;padding:32px 0;font-size:13px;color:#8b949e;background:transparent}
 
-/* ── Tablet ── */
-@media (min-width:600px){
-  .container{max-width:640px;margin:0 auto;padding:0 24px}
-  .hero{padding:40px}
-  .hero-text{font-size:28px}
-  .svc-icon{width:32px;height:32px}
-}
-
-/* ── Desktop ── */
-@media (min-width:1024px){
-  .container{max-width:780px;padding:0 32px}
-  .header{padding:20px 32px}
-  .hero{padding:48px}
-}
-
 /* ── Mobile <= 600px ── */
 @media (max-width:600px){
-  .logo-subtitle{display:none}
   .subscribe-btn-text-full{display:none}
   .subscribe-btn-text-short{display:inline}
-  .subscribe-btn{padding:8px 14px;font-size:11px}
-  .header{padding:16px 16px;gap:8px}
-  .brand{font-size:16px}
+  .subscribe-btn{padding:8px 12px;font-size:10px}
+  .header{padding:14px 16px}
+  .logo-name{font-size:15px}
+  .logo-subtitle{font-size:13px}
   .hero{padding:20px}
   .hero-text{font-size:18px}
   .hero-sub{font-size:13px}
   .svc-card{padding:16px}
   .bars-container{height:36px;margin:10px 0 2px}
+  .container{padding:0 16px}
   /* Mobile modal as bottom sheet */
   .modal-overlay{padding:0;align-items:flex-end;justify-content:stretch}
   .modal-card{width:100%;max-width:100%;border-radius:20px 20px 0 0;padding:28px 20px 20px;margin-bottom:0}
@@ -126,19 +110,20 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f0f2f5;c
 </style>
 </head>
 <body>
-<div class="container">
-  <!-- Header -->
-  <header class="header">
-    <div class="logo-row">
-      <img class="logo-img" src="https://app.sadabmunshi.online/favicon.ico" alt="" onerror="this.style.display='none'">
-      <span><span class="brand">FinFlow</span> <span class="logo-subtitle"> Status</span></span>
-    </div>
-    <button class="subscribe-btn" id="header-subscribe">
-      <span class="subscribe-btn-text-full">SUBSCRIBE TO UPDATES</span>
-      <span class="subscribe-btn-text-short">SUBSCRIBE</span>
-    </button>
-  </header>
 
+<!-- Header (full-width, outside container) -->
+<header class="header">
+  <div class="logo-row">
+    <img class="logo-img" src="https://app.sadabmunshi.online/favicon.ico" alt="" onerror="this.style.display='none'">
+    <span><span class="logo-name">FinFlow</span> <span class="logo-subtitle">Status</span></span>
+  </div>
+  <button class="subscribe-btn" id="header-subscribe">
+    <span class="subscribe-btn-text-full">SUBSCRIBE TO UPDATES</span>
+    <span class="subscribe-btn-text-short">SUBSCRIBE</span>
+  </button>
+</header>
+
+<div class="container">
   <!-- Hero -->
   <div class="hero operational" id="hero">
     <div class="hero-circle"></div>
@@ -295,7 +280,7 @@ function render(data) {
     const statusText = statusClass === "operational" ? "Operational" : "Down";
     const historyUrl = `/history?service=${encodeServiceName(svc.name)}`;
     const card = document.createElement("div");
-    card.className = `svc-card ${statusClass}`;
+    card.className = 'svc-card';
     card.innerHTML = `
       <div class="service-top">
         <span class="svc-icon">${ICONS[key]}</span>
