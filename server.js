@@ -179,7 +179,7 @@ async function sendStatusAlert(serviceName, serviceUrl, newStatus) {
         <!-- CTA Button -->
         <tr>
           <td style="padding:28px 32px 0;text-align:center">
-            <a href="https://status.app.sadabmunshi.online" target="_blank" style="display:inline-block;background-color:${statusColor};color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;padding:12px 32px;border-radius:8px">
+            <a href="${statusPageUrl}" target="_blank" style="display:inline-block;background-color:${statusColor};color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;padding:12px 32px;border-radius:8px">
               View Status Page
             </a>
           </td>
