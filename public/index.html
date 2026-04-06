@@ -9,16 +9,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;color:#24292f;min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
-.container{max-width:760px;margin:0 auto;padding:24px 16px 48px}
+
+/* ── Container (mobile-first) ── */
+.container{max-width:100%;padding:0 16px}
 
 /* ── Header (sticky) ── */
-.header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #e1e4e8;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin:0 -16px 24px;flex-wrap:wrap;gap:6px}
+.header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #e1e4e8;padding:12px 0 6px;margin:0 -16px 24px}
 .logo-row{display:flex;align-items:center;gap:8px}
 .logo-img{width:32px;height:32px;border-radius:6px}
 .brand{font-size:20px;font-weight:700;color:#24292f}
 .brand-muted{font-weight:500;color:#57606a}
-.meta-right{font-size:13px;color:#57606a;text-align:right;white-space:nowrap}
-.meta-right div{line-height:1.6}
+.header-meta{font-size:12px;color:#57606a;line-height:1.4}
+.meta-right{display:flex;align-items:baseline;gap:4px}
+.meta-right div{white-space:nowrap}
+.meta-right>#countdown{white-space:nowrap}
 
 /* ── Hero ── */
 .hero{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border:1px solid #e1e4e8;padding:32px;display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;text-align:center;flex-wrap:wrap;transition:background .3s ease,border-color .3s ease}
@@ -35,10 +39,12 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 /* ── Services ── */
 .section-title{font-size:16px;font-weight:700;margin-bottom:12px;color:#24292f}
 .svc-card{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border:1px solid #e1e4e8;padding:20px;margin-bottom:14px;transition:translate .3s ease}
-.svc-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+
+/* Service header grid */
+.svc-header{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:8px;margin-bottom:16px}
 .svc-icon{width:28px;height:28px;flex-shrink:0}
-.svc-name{font-weight:600;font-size:15px;flex:1}
-.svc-uptime{font-size:13px;color:#57606a;font-variant-numeric:tabular-nums}
+.svc-name{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.svc-uptime{font-size:13px;color:#57606a;font-variant-numeric:tabular-nums;justify-self:end}
 .svc-status-text{font-size:13px;font-weight:600;display:flex;align-items:center;gap:4px}
 .svc-status-text.operational{color:#1a7f37}
 .svc-status-text.down{color:#cf222e}
@@ -50,9 +56,9 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 .svc-status-text.operational .status-dot{background:#1a7f37}
 .svc-status-text.down .status-dot{background:#cf222e}
 
-/* Sparkline */
-.sparkline{display:flex;align-items:flex-end;gap:3px;height:40px;margin-bottom:6px}
-.spark-bar{width:10px;height:40px;border-radius:4px;background:#d0d7de;flex:0 0 10px;position:relative;cursor:help;transition:opacity .3s ease}
+/* ── Bars ── */
+.bars-container{display:flex;gap:2px;align-items:flex-end;height:44px;margin:12px 0 4px;width:100%;overflow:hidden}
+.spark-bar{flex:1;min-width:4px;max-width:14px;height:100%;border-radius:3px;background:#d0d7de;position:relative;cursor:help;transition:opacity .2s,height .3s,background .3s}
 .spark-bar.up{background:#1a7f37}
 .spark-bar.down{background:#cf222e}
 
@@ -64,54 +70,75 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 /* Axis labels */
 .axis-row{display:flex;justify-content:space-between;padding:0 0 0 0;font-size:11px;color:#57606a;margin-top:4px}
 
-/* ── Subscribe ── */
-.subscribe-card{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border:1px solid #e1e4e8;padding:24px;margin-top:8px}
-.sub-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.sub-header h3{font-size:16px;font-weight:700}
-.sub-desc{font-size:14px;color:#57606a;margin-bottom:16px;line-height:1.5}
-.sub-form{display:flex;gap:10px;flex-wrap:wrap}
-.sub-input{flex:1;min-width:200px;padding:10px 14px;border:1px solid #e1e4e8;border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border-color .2s}
-.sub-input:focus{border-color:#0969da;box-shadow:0 0 0 3px rgba(9,105,218,.15)}
-.sub-btn{padding:10px 24px;background:#1a7f37;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s;white-space:nowrap;display:flex;align-items:center;gap:6px}
-.sub-btn:hover{background:#15652c}
-.sub-btn:disabled{opacity:.55;cursor:not-allowed}
-.sub-msg{margin-top:12px;font-size:13px;line-height:1.4}
-.sub-msg.success{color:#1a7f37}
-.sub-msg.error{color:#cf222e}
-.sub-count{font-size:13px;color:#57606a;margin-top:10px}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* ── Floating subscribe button ── */
+.fab-subscribe{position:fixed;bottom:24px;right:24px;z-index:100;background:#1a7f37;color:#fff;border:none;border-radius:50px;padding:14px 22px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;box-shadow:0 4px 12px rgba(26,127,55,.35);display:flex;align-items:center;gap:8px;transition:transform .2s,box-shadow .2s;white-space:nowrap}
+.fab-subscribe:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(26,127,55,.4)}
+.fab-subscribe:active{transform:translateY(0)}
+
+/* ── Modal ── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .25s ease}
+.modal-overlay.open{display:flex;opacity:1}
+.modal-card{background:#fff;border-radius:16px;padding:32px;max-width:420px;width:calc(100% - 48px);text-align:center;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.2);transform:scale(.95);transition:transform .25s ease}
+.modal-overlay.open .modal-card{transform:scale(1)}
+.modal-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border:none;background:transparent;font-size:20px;color:#57606a;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.modal-close:hover{background:#f3f4f6}
+.modal-icon{font-size:48px;line-height:1;margin-bottom:12px}
+.modal-title{font-size:20px;font-weight:700;margin-bottom:8px;color:#24292f}
+.modal-desc{font-size:14px;color:#57606a;line-height:1.6;margin-bottom:24px}
+.modal-input{width:100%;height:48px;padding:0 16px;border:1px solid #e1e4e8;border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;margin-bottom:5px}
+.modal-input:focus{border-color:#0969da;box-shadow:0 0 0 3px rgba(9,105,218,.15)}
+.modal-submit-btn{width:100%;height:48px;background:#1a7f37;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s}
+.modal-submit-btn:hover{background:#15652c}
+.modal-submit-btn:disabled{opacity:.55;cursor:not-allowed}
+.modal-note{font-size:13px;color:#57606a;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:4px}
+.modal-success{padding:12px 0}
+.modal-success .checkmark{font-size:36px;margin-bottom:12px}
+.modal-success h3{font-size:20px;font-weight:700;margin-bottom:8px}
+.modal-success p{color:#57606a;font-size:14px;margin-bottom:24px;line-height:1.6}
+.modal-close-btn{width:100%;height:48px;background:#f6f8fa;color:#24292f;border:1px solid #e1e4e8;border-radius:8px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s}
+.modal-close-btn:hover{background:#e1e4e8}
 
 /* ── Footer ── */
 .footer{text-align:center;padding:32px 0 0;font-size:13px;color:#57606a;border-top:1px solid #e1e4e8;margin-top:32px}
 .footer a{color:#57606a;text-decoration:none;transition:color .2s}
 .footer a:hover{color:#24292f;text-decoration:underline}
 
+/* ── Tablet ── */
+@media (min-width:600px){
+  .container{max-width:640px;margin:0 auto;padding:0 24px}
+  .header{margin-left:-24px;margin-right:-24px}
+  .hero{padding:40px}
+  .hero-text{font-size:28px}
+  .svc-header{grid-template-columns:32px 1fr auto auto}
+  .svc-icon{width:32px;height:32px}
+}
+
+/* ── Desktop ── */
+@media (min-width:1024px){
+  .container{max-width:780px;padding:0 32px}
+  .header{margin-left:-32px;margin-right:-32px;display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+  .header .logo-row{flex-shrink:0}
+  .header .meta-right{justify-content:flex-end}
+  .meta-right div{font-size:13px;line-height:1.6}
+  .hero{padding:48px}
+}
+
 /* ── Mobile < 480px ── */
-@media(max-width:480px){
-  .header{flex-direction:column;align-items:flex-start;padding:12px 16px}
-  .meta-right{text-align:left}
+@media (max-width:480px){
+  .header{padding:12px 0 6px}
+  .header-meta{display:none}
+  .meta-right{font-size:12px;gap:6px}
   .hero{padding:20px}
   .hero-text{font-size:18px}
   .hero-sub{font-size:13px}
   .svc-card{padding:16px}
-  .sparkline{height:28px}
-  .spark-bar{width:7px;height:28px;min-width:7px}
-  .sub-form{flex-direction:column}
-  .sub-input{min-width:unset;width:100%}
-  .sub-btn{width:100%;justify-content:center}
-}
-
-/* ── Tablet 480-768px ── */
-@media(min-width:481px) and (max-width:768px){
-  .container{max-width:600px}
-  .sparkline{height:34px}
-  .spark-bar{width:9px;height:34px;min-width:9px}
-}
-
-/* ── Desktop 768px+ ── */
-@media(min-width:769px){
-  .container{max-width:760px}
+  .svc-header{grid-template-columns:28px 1fr auto 120px}
+  .bars-container{height:36px;margin:10px 0 2px}
+  .spark-bar .tip{display:none !important}
+  .fab-subscribe{bottom:16px;right:16px;padding:12px 18px;font-size:13px}
+  /* Mobile modal as bottom sheet */
+  .modal-overlay{padding:0;align-items:flex-end;justify-content:stretch}
+  .modal-card{width:100%;max-width:100%;border-radius:20px 20px 0 0;padding:28px 20px 20px;margin-bottom:0}
 }
 </style>
 </head>
@@ -140,25 +167,45 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
   <div class="section-title">Services</div>
   <div id="services"></div>
 
-  <!-- Subscribe -->
-  <div class="subscribe-card">
-    <div class="sub-header">
-      <span style="font-size:20px" aria-hidden="true"></span>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9zM13.73 21a2 2 0 01-3.46 0" stroke="#57606a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <h3>Get Status Notifications</h3>
-    </div>
-    <p class="sub-desc">Get notified when services go down or recover. No spam — only real incidents.</p>
-    <form class="sub-form" id="sub-form">
-      <input class="sub-input" id="sub-input-el" type="email" placeholder="you@example.com" required autocomplete="email">
-      <button class="sub-btn" type="submit" id="sub-btn">Subscribe</button>
-    </form>
-    <div id="sub-msg" class="sub-msg" style="display:none"></div>
-    <div class="sub-count" id="sub-count">Loading…</div>
-  </div>
-
   <!-- Footer -->
   <div class="footer">
     <a href="#">Privacy Policy</a> &middot; <a href="#">Terms of Service</a> &middot; <a href="#">Powered by FinFlow</a>
+  </div>
+</div>
+
+<!-- Floating Subscribe Button -->
+<button class="fab-subscribe" id="fab-subscribe" aria-label="Subscribe to notifications">
+  <span aria-hidden="true">🔔</span> Subscribe
+</button>
+
+<!-- Subscribe Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-card" id="modal-card" role="dialog" aria-modal="true" aria-label="Subscribe to status notifications">
+    <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+
+    <!-- Form view -->
+    <div id="modal-form-view">
+      <div class="modal-icon" style="color:#1a7f37">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9z" stroke="#1a7f37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.73 21a2 2 0 01-3.46 0" stroke="#1a7f37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h2 class="modal-title">Get Status Notifications</h2>
+      <p class="modal-desc">Be the first to know when FinFlow services go down or recover. No spam — only real incidents.</p>
+      <form id="modal-sub-form">
+        <input class="modal-input" id="modal-input" type="email" placeholder="you@example.com" required autocomplete="email">
+        <button class="modal-submit-btn" type="submit" id="modal-btn">Subscribe</button>
+      </form>
+      <div class="modal-note" id="modal-note">
+        <span style="color:#1a7f37">&#10003;</span> <span id="modal-sub-count">Loading…</span> people already subscribed
+      </div>
+    </div>
+
+    <!-- Success view -->
+    <div id="modal-success-view" style="display:none" class="modal-success">
+      <div class="checkmark">&#9989;</div>
+      <h3>You're subscribed!</h3>
+      <p id="modal-success-email">We'll notify you when anything changes.</p>
+      <button class="modal-close-btn" id="modal-success-close">Close</button>
+    </div>
   </div>
 </div>
 
@@ -207,7 +254,8 @@ function renderBars(history) {
   history.forEach((h) => {
     const cls = h.success ? "up" : "down";
     const result = h.success ? "Operational" : "Down";
-    bars.push(`<div class="spark-bar ${cls}"><span class="tip">${formatTimeFull(h.timestamp)} &middot; ${result}</span></div>`);
+    const height = h.success ? "100%" : "60%";
+    bars.push(`<div class="spark-bar ${cls}" style="height:${height}"><span class="tip">${formatTimeFull(h.timestamp)} &middot; ${result}</span></div>`);
   });
   return bars.join("");
 }
@@ -249,7 +297,7 @@ function render(data) {
         <span class="svc-uptime">${svc.uptimePercent}%</span>
         <span class="svc-status-text ${statusClass}"><span class="status-dot"></span>${statusText}</span>
       </div>
-      <div class="sparkline">${renderBars(hist.slice(-BAR_COUNT))}</div>
+      <div class="bars-container">${renderBars(hist.slice(-BAR_COUNT))}</div>
       <div class="axis-row"><span>${oldestLabel}</span><span>${newestLabel}</span></div>
     `;
     svcEl.appendChild(card);
@@ -276,9 +324,16 @@ async function fetchSubCount() {
     const res = await fetch("/api/subscribers/count");
     const data = await res.json();
     const count = data.count || 0;
-    $("#sub-count").textContent = count > 0
-      ? `${count.toLocaleString()} people subscribed`
-      : "Be the first subscriber";
+    const countEl = $("#sub-count");
+    const modalCountEl = $("#modal-sub-count");
+    if (countEl) {
+      countEl.textContent = count > 0
+        ? `\u2713 ${count.toLocaleString()} people subscribed`
+        : "Be the first subscriber";
+    }
+    if (modalCountEl) {
+      modalCountEl.textContent = count > 0 ? count.toLocaleString() : "Be the first";
+    }
   } catch {
     // silently ignore
   }
@@ -302,25 +357,49 @@ function startCountdown() {
   }, 1000);
 }
 
-// ── Subscribe form ──
-$("#sub-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const input = $("#sub-input-el");
-  const btn = $("#sub-btn");
-  const msg = $("#sub-msg");
-  const email = input.value.trim();
+// ── Modal ──
+const overlay = $("#modal-overlay");
+const fabBtn = $("#fab-subscribe");
+const modalClose = $("#modal-close");
+const modalForm = $("#modal-sub-form");
+const modalInput = $("#modal-input");
+const modalBtn = $("#modal-btn");
+const formView = $("#modal-form-view");
+const successView = $("#modal-success-view");
+const successEmail = $("#modal-success-email");
+const successClose = $("#modal-success-close");
 
-  // Client-side validation
+function openModal() {
+  overlay.classList.add("open");
+  formView.style.display = "";
+  successView.style.display = "none";
+  modalInput.value = "";
+  modalInput.focus();
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  overlay.classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+fabBtn.addEventListener("click", openModal);
+modalClose.addEventListener("click", closeModal);
+successClose.addEventListener("click", closeModal);
+overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && overlay.classList.contains("open")) closeModal(); });
+
+// ── Modal subscribe form ──
+modalForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = modalInput.value.trim();
+
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    msg.textContent = "Please enter a valid email address.";
-    msg.className = "sub-msg error";
-    msg.style.display = "block";
     return;
   }
 
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Subscribing…';
-  msg.style.display = "none";
+  modalBtn.disabled = true;
+  modalBtn.textContent = "Subscribing…";
 
   try {
     const res = await fetch("/api/subscribe", {
@@ -330,22 +409,16 @@ $("#sub-form").addEventListener("submit", async (e) => {
     });
     const data = await res.json();
     if (data.success) {
-      msg.textContent = "\u2713 You're subscribed! Check your inbox.";
-      msg.className = "sub-msg success";
-      input.value = "";
+      formView.style.display = "none";
+      successView.style.display = "block";
+      successEmail.textContent = `We'll notify you at ${email} when anything changes.`;
       fetchSubCount();
-    } else {
-      msg.textContent = data.message || "Something went wrong. Try again.";
-      msg.className = "sub-msg error";
     }
   } catch {
-    msg.textContent = "Something went wrong. Try again.";
-    msg.className = "sub-msg error";
+    // silently fail
   } finally {
-    btn.disabled = false;
-    btn.innerHTML = "Subscribe";
-    msg.style.display = "block";
-    setTimeout(() => { msg.style.display = "none"; }, 5000);
+    modalBtn.disabled = false;
+    modalBtn.textContent = "Subscribe";
   }
 });
 
