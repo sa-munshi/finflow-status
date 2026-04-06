@@ -94,14 +94,18 @@ async function sendStatusAlert(serviceName, serviceUrl, newStatus) {
     ? `✅ UP: ${serviceName} has recovered`
     : `🚨 DOWN: ${serviceName} is down`;
   const statusText = isUp ? "Recovered (UP)" : "Down (DOWN)";
-  const statusColor = isUp ? "#1a7f37" : "#cf222e";
+  const statusColor = isUp ? "#16a34a" : "#dc2626";
+  const statusBg = isUp ? "#f0fdf4" : "#fef2f2";
+  const statusBadgeBg = isUp ? "#dcfce7" : "#fee2e2";
   const statusEmoji = isUp ? "✅" : "🚨";
+  const statusIcon = isUp ? "🟢" : "🔴";
   const timestamp = new Date().toLocaleString("en-US", {
     dateStyle: "medium",
     timeStyle: "short",
-  });
+    timeZone: "Asia/Kolkata",
+  }) + " IST";
 
-  const statusPageUrl = process.env.STATUS_PAGE_URL || `http://localhost:${PORT}`;
+  const statusPageUrl = process.env.STATUS_PAGE_URL || "https://status.app.sadabmunshi.online";
 
   for (const subscriber of subscribers) {
     const email = getSubscriberEmail(subscriber);
@@ -115,17 +119,90 @@ async function sendStatusAlert(serviceName, serviceUrl, newStatus) {
         to: email,
         subject,
         html: `
-          <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px">
-            <h2 style="color:${statusColor}">${statusEmoji} ${serviceName} — ${statusText}</h2>
-            <p><strong>Service:</strong> ${serviceName}</p>
-            <p><strong>Status:</strong> ${statusText}</p>
-            <p><strong>Time:</strong> ${timestamp}</p>
-            <hr style="border:none;border-top:1px solid #e1e4e8;margin:20px 0">
-            <p style="font-size:12px;color:#57606a">
-              You are receiving this because you subscribed to FinFlow status alerts.<br>
-              <a href="${unsubscribeUrl}">Unsubscribe</a>
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background-color:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f5;padding:32px 16px">
+    <tr><td align="center">
+      <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+        <!-- Header -->
+        <tr>
+          <td style="background-color:${statusColor};padding:24px 32px;text-align:center">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr><td style="text-align:center;font-size:40px;line-height:1">${statusEmoji}</td></tr>
+              <tr><td style="text-align:center;padding-top:12px;color:#ffffff;font-size:22px;font-weight:700;letter-spacing:-0.3px">
+                FinFlow Status Alert
+              </td></tr>
+            </table>
+          </td>
+        </tr>
+        <!-- Status Badge -->
+        <tr>
+          <td style="padding:28px 32px 0;text-align:center">
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto">
+              <tr><td style="background-color:${statusBadgeBg};color:${statusColor};font-size:14px;font-weight:700;padding:6px 18px;border-radius:20px;letter-spacing:0.3px;text-transform:uppercase">
+                ${statusIcon} ${isUp ? "Service Recovered" : "Service Down"}
+              </td></tr>
+            </table>
+          </td>
+        </tr>
+        <!-- Service Name -->
+        <tr>
+          <td style="padding:20px 32px 0;text-align:center">
+            <span style="font-size:24px;font-weight:700;color:#18181b">${serviceName}</span>
+          </td>
+        </tr>
+        <!-- Divider -->
+        <tr><td style="padding:20px 32px 0"><hr style="border:none;border-top:1px solid #e4e4e7;margin:0"></td></tr>
+        <!-- Details Table -->
+        <tr>
+          <td style="padding:20px 32px 0">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${statusBg};border-radius:8px;padding:16px">
+              <tr>
+                <td style="padding:8px 16px;color:#71717a;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;width:110px;vertical-align:top">Status</td>
+                <td style="padding:8px 16px;color:${statusColor};font-size:15px;font-weight:700">${statusText}</td>
+              </tr>
+              <tr><td colspan="2" style="padding:0 16px"><hr style="border:none;border-top:1px solid #e4e4e7;margin:0"></td></tr>
+              <tr>
+                <td style="padding:8px 16px;color:#71717a;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;width:110px;vertical-align:top">Service</td>
+                <td style="padding:8px 16px;color:#18181b;font-size:15px">${serviceName}</td>
+              </tr>
+              <tr><td colspan="2" style="padding:0 16px"><hr style="border:none;border-top:1px solid #e4e4e7;margin:0"></td></tr>
+              <tr>
+                <td style="padding:8px 16px;color:#71717a;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;width:110px;vertical-align:top">Detected</td>
+                <td style="padding:8px 16px;color:#18181b;font-size:15px">${timestamp}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <!-- CTA Button -->
+        <tr>
+          <td style="padding:28px 32px 0;text-align:center">
+            <a href="https://status.app.sadabmunshi.online" target="_blank" style="display:inline-block;background-color:${statusColor};color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;padding:12px 32px;border-radius:8px">
+              View Status Page
+            </a>
+          </td>
+        </tr>
+        <!-- Divider -->
+        <tr><td style="padding:28px 32px 0"><hr style="border:none;border-top:1px solid #e4e4e7;margin:0"></td></tr>
+        <!-- Footer -->
+        <tr>
+          <td style="padding:20px 32px 28px;text-align:center">
+            <p style="margin:0 0 12px;font-size:12px;color:#a1a1aa;line-height:1.5">
+              You are receiving this because you subscribed to FinFlow status alerts.
             </p>
-          </div>
+            <a href="${unsubscribeUrl}" target="_blank" style="display:inline-block;font-size:12px;color:#71717a;text-decoration:none;padding:6px 16px;border:1px solid #d4d4d8;border-radius:6px">
+              Unsubscribe
+            </a>
+            <p style="margin:16px 0 0;font-size:11px;color:#d4d4d8">&copy; FinFlow Status</p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>
         `,
       });
     } catch (err) {
