@@ -71,7 +71,18 @@ function saveSubscribers() {
 const subscribers = loadSubscribers();
 
 function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (typeof email !== "string" || email.length > 254) return false;
+  // Simpler regex to avoid ReDoS - checks basic structure only
+  const parts = email.split("@");
+  if (parts.length !== 2) return false;
+  const [local, domain] = parts;
+  if (!local || local.length > 64 || !domain) return false;
+  return /^[^\s@]+$/.test(local) && /^[^\s.][^\s@]*\.[^\s@]+$/.test(domain);
+}
+
+// ── Helper to extract email from subscriber entry ──
+function getSubscriberEmail(subscriber) {
+  return typeof subscriber === "string" ? subscriber : subscriber.email;
 }
 
 // ── Send status alert email to all subscribers ──
@@ -93,7 +104,7 @@ async function sendStatusAlert(serviceName, serviceUrl, newStatus) {
   const statusPageUrl = process.env.STATUS_PAGE_URL || `http://localhost:${PORT}`;
 
   for (const subscriber of subscribers) {
-    const email = typeof subscriber === "string" ? subscriber : subscriber.email;
+    const email = getSubscriberEmail(subscriber);
     if (!email) continue;
 
     const unsubscribeUrl = `${statusPageUrl.replace(/\/$/, "")}/api/unsubscribe?email=${encodeURIComponent(email)}`;
@@ -118,7 +129,7 @@ async function sendStatusAlert(serviceName, serviceUrl, newStatus) {
         `,
       });
     } catch (err) {
-      console.error(`Failed to send email to ${email}:`, err.message);
+      console.error("Failed to send email to %s: %s", email, err.message);
     }
   }
 }
@@ -335,7 +346,7 @@ app.post("/api/subscribe", (req, res) => {
   }
   const normalizedEmail = email.toLowerCase().trim();
   const exists = subscribers.some(
-    (s) => (typeof s === "string" ? s : s.email).toLowerCase() === normalizedEmail
+    (s) => getSubscriberEmail(s).toLowerCase() === normalizedEmail
   );
   if (exists) {
     return res.status(409).json({ success: false, message: "Already subscribed" });
@@ -352,7 +363,7 @@ app.delete("/api/unsubscribe", (req, res) => {
   }
   const normalizedEmail = email.toLowerCase().trim();
   const index = subscribers.findIndex(
-    (s) => (typeof s === "string" ? s : s.email).toLowerCase() === normalizedEmail
+    (s) => getSubscriberEmail(s).toLowerCase() === normalizedEmail
   );
   if (index === -1) {
     return res.status(404).json({ success: false, message: "Email not found" });
@@ -370,7 +381,7 @@ app.get("/api/unsubscribe", (req, res) => {
   }
   const normalizedEmail = email.toLowerCase().trim();
   const index = subscribers.findIndex(
-    (s) => (typeof s === "string" ? s : s.email).toLowerCase() === normalizedEmail
+    (s) => getSubscriberEmail(s).toLowerCase() === normalizedEmail
   );
   if (index === -1) {
     return res.send("Email not found or already unsubscribed.");
