@@ -8,25 +8,27 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;color:#24292f;min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#24292f;min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
 
 /* ── Container (mobile-first) ── */
 .container{max-width:100%;padding:0 16px}
 
 /* ── Header ── */
-.header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:#fff;border-bottom:1px solid #e1e4e8;position:static}
+.header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:#fff;box-shadow:0 1px 0 #e1e4e8;position:static}
 .logo-row{display:flex;align-items:center;gap:8px}
 .logo-img{width:32px;height:32px;border-radius:6px}
 .brand{font-size:18px;font-weight:700;color:#24292f}
-.brand-muted{font-weight:500;color:#57606a}
-.subscribe-btn{background:#24292f;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:background .2s;font-family:inherit}
-.subscribe-btn:hover{background:#444}
+.logo-subtitle{font-weight:500;color:#57606a;display:inline}
+.subscribe-btn{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:opacity .2s;font-family:inherit}
+.subscribe-btn:hover{opacity:.85}
+.subscribe-btn-text-full{display:inline}
+.subscribe-btn-text-short{display:none}
 
 /* ── Hero ── */
-.hero{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border:1px solid #e1e4e8;padding:32px;display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:8px;text-align:center;flex-wrap:wrap;transition:background .3s ease,border-color .3s ease}
-.hero.operational{background:#dafbe1;border-color:rgba(26,127,55,0.25)}
-.hero.degraded{background:#fff8c5;border-color:rgba(191,135,0,0.25)}
-.hero.down{background:#ffebe9;border-color:rgba(207,34,46,0.25)}
+.hero{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.08);border:none;padding:32px;display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;text-align:center;flex-wrap:wrap;transition:background .3s ease,border .3s ease}
+.hero.operational{background:linear-gradient(135deg,#d4f5e2 0%,#e8fdf0 100%);border:1.5px solid #a8e6c0}
+.hero.degraded{background:linear-gradient(135deg,#fef3cd 0%,#fff8e1 100%);border:1.5px solid #f5c842}
+.hero.down{background:linear-gradient(135deg,#fde8e8 0%,#fff0f0 100%);border:1.5px solid #f5a8a8}
 .hero-circle{width:20px;height:20px;border-radius:50%;flex-shrink:0}
 .hero.operational .hero-circle{background:#1a7f37;box-shadow:0 0 16px rgba(26,127,55,.4)}
 .hero.degraded .hero-circle{background:#bf8700;box-shadow:0 0 16px rgba(191,135,0,.4)}
@@ -34,20 +36,19 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 .hero-text{font-size:24px;font-weight:700}
 .hero-sub{width:100%;font-size:15px;color:#57606a;margin-top:4px}
 
-/* ── Update bar ── */
-.update-bar{text-align:center;font-size:12px;color:#8c959f;margin:8px 0 16px}
-
 /* ── Services ── */
-.section-title{font-size:16px;font-weight:700;margin-bottom:12px;color:#24292f}
-.svc-card{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border:1px solid #e1e4e8;padding:20px;margin-bottom:14px;transition:translate .3s ease}
+.section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#57606a;margin-bottom:12px}
+.svc-card{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.08);border:none;padding:20px;margin-bottom:14px;transition:translate .3s ease}
+.svc-card.operational{border-left:3px solid #1a7f37}
+.svc-card.down{border-left:3px solid #cf222e}
 
 /* Service header: icon | name | status pill */
 .service-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
 .svc-icon{width:28px;height:28px;flex-shrink:0}
 .service-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:visible;text-overflow:clip}
-.status-pill{font-size:12px;font-weight:600;display:flex;align-items:center;gap:4px;flex-shrink:0}
-.status-pill.operational{color:#1a7f37}
-.status-pill.down{color:#cf222e}
+.status-pill{font-size:12px;font-weight:600;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:3px 10px;border-radius:20px}
+.status-pill.operational{color:#1a7f37;background:#d4f5e2}
+.status-pill.down{color:#cf222e;background:#fde8e8}
 .status-pill .status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .status-pill.operational .status-dot{background:#1a7f37}
 .status-pill.down .status-dot{background:#cf222e}
@@ -80,7 +81,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 .modal-submit-btn{width:100%;height:48px;background:#1a7f37;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s}
 .modal-submit-btn:hover{background:#15652c}
 .modal-submit-btn:disabled{opacity:.55;cursor:not-allowed}
-.modal-note{font-size:13px;color:#57606a;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:4px}
 .modal-success{padding:12px 0}
 .modal-success .checkmark{font-size:36px;margin-bottom:12px}
 .modal-success h3{font-size:20px;font-weight:700;margin-bottom:8px}
@@ -89,7 +89,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 .modal-close-btn:hover{background:#e1e4e8}
 
 /* ── Footer ── */
-.footer{text-align:center;padding:24px 0;font-size:13px;color:#8c959f}
+.footer{text-align:center;padding:32px 0;font-size:13px;color:#8b949e;background:transparent}
 
 /* ── Tablet ── */
 @media (min-width:600px){
@@ -106,11 +106,14 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
   .hero{padding:48px}
 }
 
-/* ── Mobile < 480px ── */
-@media (max-width:480px){
+/* ── Mobile <= 600px ── */
+@media (max-width:600px){
+  .logo-subtitle{display:none}
+  .subscribe-btn-text-full{display:none}
+  .subscribe-btn-text-short{display:inline}
+  .subscribe-btn{padding:8px 14px;font-size:11px}
   .header{padding:16px 16px;gap:8px}
   .brand{font-size:16px}
-  .subscribe-btn{padding:8px 14px;font-size:11px}
   .hero{padding:20px}
   .hero-text{font-size:18px}
   .hero-sub{font-size:13px}
@@ -128,9 +131,12 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
   <header class="header">
     <div class="logo-row">
       <img class="logo-img" src="https://app.sadabmunshi.online/favicon.ico" alt="" onerror="this.style.display='none'">
-      <span><span class="brand">FinFlow</span> <span class="brand-muted">Status</span></span>
+      <span><span class="brand">FinFlow</span> <span class="logo-subtitle"> Status</span></span>
     </div>
-    <button class="subscribe-btn" id="header-subscribe">Subscribe to Updates</button>
+    <button class="subscribe-btn" id="header-subscribe">
+      <span class="subscribe-btn-text-full">SUBSCRIBE TO UPDATES</span>
+      <span class="subscribe-btn-text-short">SUBSCRIBE</span>
+    </button>
   </header>
 
   <!-- Hero -->
@@ -139,7 +145,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
     <div class="hero-text" id="hero-text">All Systems Operational</div>
     <div class="hero-sub" id="hero-sub">All monitored services are online</div>
   </div>
-  <div class="update-bar" id="update-bar">Checking…</div>
 
   <!-- Services -->
   <div class="section-title">Services</div>
@@ -165,9 +170,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
         <input class="modal-input" id="modal-input" type="email" placeholder="you@example.com" required autocomplete="email">
         <button class="modal-submit-btn" type="submit" id="modal-btn">Subscribe</button>
       </form>
-      <div class="modal-note" id="modal-note">
-        <span style="color:#1a7f37">&#10003;</span> <span id="modal-sub-count">Loading…</span> people already subscribed
-      </div>
     </div>
 
     <!-- Success view -->
@@ -187,20 +189,10 @@ const ICONS = {
   telegram: '<svg class="svc-icon" viewBox="0 0 24 24" fill="none"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.04 9.613c-.15.668-.543.83-1.099.517l-3.037-2.237-1.465 1.41c-.162.162-.298.298-.61.298l.218-3.088 5.625-5.082c.244-.218-.054-.338-.379-.12L7.086 14.748l-2.99-.934c-.65-.203-.663-.65.136-.962l11.679-4.504c.541-.196 1.015.132.651.9z" fill="#229ED9"/></svg>'
 };
 const SVC_KEYS = ["web","whatsapp","telegram"];
-const COUNTDOWN_SEC = 60;
-let countdownVal = COUNTDOWN_SEC;
-let countdownTimer = null;
+const REFRESH_INTERVAL_SEC = 60;
 let fetching = false;
 
 const $ = (s) => document.querySelector(s);
-
-function formatTimeShort(iso) {
-  const d = new Date(iso);
-  const h = d.getHours().toString().padStart(2,'0');
-  const m = d.getMinutes().toString().padStart(2,'0');
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return `${h}:${m} \u00b7 ${months[d.getMonth()]} ${d.getDate()}`;
-}
 
 function encodeServiceName(name) {
   return encodeURIComponent(name);
@@ -294,9 +286,6 @@ function render(data) {
     $("#hero-sub").textContent = "All monitored services are offline";
   }
 
-  // Update bar below hero
-  $("#update-bar").textContent = `Last updated: ${formatTimeShort(data.lastUpdated)} \u00b7 Next update in ${countdownVal}s`;
-
   // Services
   const svcEl = $("#services");
   svcEl.innerHTML = "";
@@ -306,7 +295,7 @@ function render(data) {
     const statusText = statusClass === "operational" ? "Operational" : "Down";
     const historyUrl = `/history?service=${encodeServiceName(svc.name)}`;
     const card = document.createElement("div");
-    card.className = "svc-card";
+    card.className = `svc-card ${statusClass}`;
     card.innerHTML = `
       <div class="service-top">
         <span class="svc-icon">${ICONS[key]}</span>
@@ -318,7 +307,6 @@ function render(data) {
       <div class="service-meta">${svc.uptimePercent}% (24h)</div>
     `;
 
-    // Insert bars, then axis row, then history link
     const barsWithPcts = svc.bars24h.slice();
     barsWithPcts._pct = svc._barPcts || [];
     const barsContainer = renderBars24h(barsWithPcts);
@@ -350,46 +338,7 @@ async function fetchStatus() {
     console.error("Failed to fetch status:", e);
   } finally {
     fetching = false;
-    resetCountdown();
   }
-}
-
-async function fetchSubCount() {
-  try {
-    const res = await fetch("/api/subscribers/count");
-    const data = await res.json();
-    const count = data.count || 0;
-    const countEl = $("#sub-count");
-    const modalCountEl = $("#modal-sub-count");
-    if (countEl) {
-      countEl.textContent = count > 0
-        ? `\u2713 ${count.toLocaleString()} people subscribed`
-        : "Be the first subscriber";
-    }
-    if (modalCountEl) {
-      modalCountEl.textContent = count > 0 ? count.toLocaleString() : "Be the first";
-    }
-  } catch {
-    // silently ignore
-  }
-}
-
-function resetCountdown() {
-  countdownVal = COUNTDOWN_SEC;
-}
-
-function startCountdown() {
-  if (countdownTimer) clearInterval(countdownTimer);
-  countdownVal = COUNTDOWN_SEC;
-  countdownTimer = setInterval(() => {
-    countdownVal--;
-    if (countdownVal <= 0) {
-      fetchStatus();
-    } else {
-      const bar = $("#update-bar");
-      if (bar) bar.textContent = bar.textContent.replace(/Next update in \d+s/, `Next update in ${countdownVal}s`);
-    }
-  }, 1000);
 }
 
 // ── Modal ──
@@ -434,7 +383,7 @@ modalForm.addEventListener("submit", async (e) => {
   }
 
   modalBtn.disabled = true;
-  modalBtn.textContent = "Subscribing…";
+  modalBtn.textContent = "Subscribing\u2026";
 
   try {
     const res = await fetch("/api/subscribe", {
@@ -447,7 +396,6 @@ modalForm.addEventListener("submit", async (e) => {
       formView.style.display = "none";
       successView.style.display = "block";
       successEmail.textContent = `We'll notify you at ${email} when anything changes.`;
-      fetchSubCount();
     }
   } catch {
     // silently fail
@@ -459,10 +407,7 @@ modalForm.addEventListener("submit", async (e) => {
 
 // ── Init ──
 fetchStatus();
-fetchSubCount();
-startCountdown();
-// Refresh subscriber count every 3 min
-setInterval(fetchSubCount, 180000);
+setInterval(fetchStatus, REFRESH_INTERVAL_SEC * 1000);
 </script>
 </body>
 </html>
