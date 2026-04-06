@@ -4,105 +4,117 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FinFlow Status</title>
+<link rel="icon" href="https://app.sadabmunshi.online/favicon.ico" type="image/x-icon">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0d1117;--card:#161b22;--border:#30363d;
-  --text:#e6edf3;--muted:#8b949e;
-  --green:#3fb950;--red:#f85149;--orange:#d29922;--blue:#1f6feb;
-  --bar-bg:#21262d;
-}
-body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px 16px;line-height:1.5}
-.container{max-width:820px;margin:0 auto}
+body{font-family:system-ui,-apple-system,-apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#2c2c2c;min-height:100vh;line-height:1.5}
+.container{max-width:720px;margin:0 auto;padding:28px 20px}
 
 /* ── Header ── */
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:8px}
-.logo{display:flex;align-items:center;gap:10px}
-.logo-icon{width:36px;height:36px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff}
-.logo-text{font-size:22px;font-weight:700;letter-spacing:-.3px}
-.subtitle{color:var(--muted);font-size:14px}
-.last-updated{font-size:13px;color:var(--muted);white-space:nowrap}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:8px}
+.logo-group{display:flex;flex-direction:column;gap:2px}
+.logo-row{display:flex;align-items:center;gap:10px}
+.logo-img{width:28px;height:28px;border-radius:6px}
+.logo-text{font-size:20px;font-weight:700}
+.subtitle{font-size:14px;color:#6b7280;margin-top:2px}
+.meta-right{font-size:13px;color:#6b7280;text-align:right;white-space:nowrap}
 
-/* ── Hero ── */
-.hero{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:28px 24px;display:flex;align-items:center;gap:16px;margin-bottom:20px;transition:background .3s,border-color .3s}
-.hero.operational{background:rgba(63,185,80,.06);border-color:rgba(63,185,80,.18)}
-.hero.degraded{background:rgba(210,153,34,.06);border-color:rgba(210,153,34,.18)}
-.hero.down{background:rgba(248,81,73,.06);border-color:rgba(248,81,73,.18)}
-.hero-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
-.operational .hero-dot{background:var(--green);box-shadow:0 0 12px rgba(63,185,80,.5)}
-.degraded .hero-dot{background:var(--orange);box-shadow:0 0 12px rgba(210,153,34,.5)}
-.down .hero-dot{background:var(--red);box-shadow:0 0 12px rgba(248,81,73,.5)}
-.hero-text{font-size:18px;font-weight:600}
+/* ── Overall Status Card ── */
+.overall-card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:24px 28px;display:flex;align-items:center;gap:16px;margin-bottom:28px}
+.overall-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0}
+.overall-card.operational .overall-dot{background:#3BA55D;box-shadow:0 0 14px rgba(59,165,93,.4)}
+.overall-card.degraded .overall-dot{background:#f59e0b;box-shadow:0 0 14px rgba(245,158,11,.4)}
+.overall-card.down .overall-dot{background:#ED4245;box-shadow:0 0 14px rgba(237,66,69,.4)}
+.overall-text{font-size:20px;font-weight:700}
 
-/* ── Service Card ── */
-.service-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.svc-left{display:flex;align-items:center;gap:10px;min-width:180px;flex:1}
-.svc-icon{width:32px;height:32px;flex-shrink:0}
-.svc-name{font-weight:600;font-size:15px;white-space:nowrap}
+/* ── Services Section ── */
+.section-title{font-size:15px;font-weight:700;margin-bottom:14px;color:#2c2c2c}
+.service-list{border-top:1px solid #e0e0e0}
+.service-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid #e0e0e0;flex-wrap:wrap;gap:10px}
+
+/* Service name + uptime */
+.svc-header{display:flex;align-items:center;gap:8px;min-width:180px;flex:1 0 180px;max-width:220px}
+.svc-icon{width:28px;height:28px;flex-shrink:0}
+.svc-name{font-weight:600;font-size:14px}
+.svc-uptime{font-size:13px;color:#6b7280;margin-left:auto;white-space:nowrap}
 
 /* Sparkline */
-.sparkline{display:flex;align-items:end;gap:3px;height:28px;flex:1;justify-content:center;min-width:120px}
-.spark-bar{width:6px;min-height:4px;border-radius:2px;background:#484f58;flex:0 0 6px}
-.spark-bar.up{background:var(--green)}
-.spark-bar.down{background:var(--red);animation:barPulse 1.5s ease-in-out infinite}
-@keyframes barPulse{0%,100%{opacity:1}50%{opacity:.5}}
-
-/* Right */
-.svc-right{text-align:right;min-width:130px}
-.uptime{text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
-.status-pill{display:inline-block;font-size:11px;padding:2px 10px;border-radius:12px;font-weight:600;margin-top:3px}
-.status-pill.operational{background:rgba(63,185,80,.15);color:var(--green)}
-.status-pill.down{background:rgba(248,81,73,.15);color:var(--red)}
+.sparkline{display:flex;align-items:center;gap:3px;height:34px;flex:2 1 240px;justify-content:center;min-width:140px}
+.spark-bar{width:12px;height:34px;border-radius:3px;background:#E3E5E8;flex:0 0 12px;position:relative;cursor:help;transition:opacity .3s}
+.spark-bar.up{background:#3BA55D}
+.spark-bar.down{background:#ED4245;animation:barPulse 1.5s ease-in-out infinite}
+@keyframes barPulse{0%,100%{opacity:1}50%{opacity:.55}}
 
 /* Tooltip */
-.spark-bar{position:relative;cursor:help}
-.spark-bar .tip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#2d333b;color:var(--text);font-size:11px;padding:5px 8px;border-radius:6px;white-space:nowrap;z-index:10;pointer-events:none;border:1px solid var(--border)}
-.spark-bar:hover .tip,#spark-bar-hover .tip{display:block}
+.spark-bar .tip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;font-size:11px;padding:5px 8px;border-radius:6px;white-space:nowrap;z-index:10;pointer-events:none;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.spark-bar:hover .tip{display:block}
 
-/* Checking indicator */
-.checking{position:fixed;top:0;left:0;height:3px;background:var(--blue);z-index:100;width:100%;transform-origin:left;animation:checkSlide 1s ease-in-out infinite alternate;opacity:.7}
-@keyframes checkSlide{0%{transform:scaleX(0);transform-origin:left}100%{transform:scaleX(1);transform-origin:right}}
+/* Status text */
+.svc-status{display:flex;align-items:center;gap:4px;min-width:110px;justify-content:flex-end;font-size:13px;font-weight:600}
+.status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.svc-status.operational{color:#3BA55D}
+.svc-status.operational .status-dot{background:#3BA55D}
+.svc-status.down{color:#ED4245}
+.svc-status.down .status-dot{background:#ED4245}
 
-/* Footer */
-.footer{text-align:center;color:var(--muted);font-size:13px;margin-top:40px;padding-top:20px;border-top:1px solid var(--border)}
+/* ── Footer ── */
+.footer{text-align:center;color:#9ca3af;font-size:13px;margin-top:36px;padding-top:18px;border-top:1px solid #e5e7eb}
+.footer a{color:#6b7280;text-decoration:none}
+.footer a:hover{color:#3BA55D}
 
-/* Responsive */
+/* ── Responsive ── */
 @media(max-width:600px){
-  .service-card{flex-direction:column;align-items:flex-start;gap:10px}
-  .svc-right{text-align:left;min-width:unset}
-  .uptime{text-align:left}
-  .sparkline{justify-content:flex-start}
+  .service-row{flex-direction:column;align-items:flex-start}
+  .svc-header{max-width:100%}
+  .svc-uptime{margin-left:0}
+  .sparkline{justify-content:flex-start;width:100%}
+  .svc-status{width:100%;justify-content:flex-start}
 }
 </style>
 </head>
 <body>
 <div class="container">
   <div class="header">
-    <div class="logo">
-      <div class="logo-icon">F</div>
-      <div><div class="logo-text">FinFlow</div><div class="subtitle">Service Status</div></div>
+    <div class="logo-group">
+      <div class="logo-row">
+        <img class="logo-img" src="https://app.sadabmunshi.online/favicon.ico" alt="FinFlow" onerror="this.style.display='none';document.getElementById('logo-fb').style.display='block';">
+        <span class="logo-text">FinFlow</span>
+        <span class="logo-text" id="logo-fb" style="display:none">FinFlow</span>
+      </div>
+      <div class="subtitle">Service status</div>
     </div>
-    <div class="last-updated" id="last-updated">Checking…</div>
+    <div class="meta-right">
+      <div id="last-updated">Checking…</div>
+      <div id="countdown">Next update in 60s</div>
+    </div>
   </div>
 
-  <div class="hero operational" id="hero">
-    <div class="hero-dot"></div>
-    <div class="hero-text" id="hero-text">All Systems Operational</div>
+  <div class="overall-card operational" id="hero">
+    <div class="overall-dot"></div>
+    <div class="overall-text" id="hero-text">All Systems Operational</div>
   </div>
 
-  <div id="services"></div>
+  <div class="section-title">Services</div>
+  <div class="service-list" id="services"></div>
 
-  <div class="footer">Powered by FinFlow</div>
+  <div class="footer">
+    <a href="#">Privacy policy</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#">Terms of Service</a>&nbsp;&nbsp;|&nbsp;&nbsp;Status page by FinFlow
+  </div>
 </div>
 
 <script>
 const ICONS = {
-  web: `<svg class="svc-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="#4A90D9" stroke-width="2"/><ellipse cx="12" cy="12" rx="4" ry="10" stroke="#4A90D9" stroke-width="2"/><path d="M2 12h20" stroke="#4A90D9" stroke-width="2"/></svg>`,
-  whatsapp: `<svg class="svc-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.556 4.116 1.526 5.845L0 24l6.335-1.502A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm5.894 16.418c-.247.696-1.443 1.329-1.972 1.374-.53.046-1.018.232-3.438-.716-2.92-1.147-4.795-4.063-4.941-4.252-.146-.19-1.188-1.58-1.188-3.01 0-1.432.748-2.135 1.013-2.428.265-.293.578-.366.77-.366l.554.01c.178.008.418-.067.654.499.247.592.84 2.045.913 2.194.073.148.122.322.024.518-.097.196-.146.318-.293.489-.146.17-.308.38-.44.511-.146.146-.298.304-.128.597.17.293.757 1.247 1.625 2.02 1.116.997 2.057 1.306 2.35 1.452.292.146.463.122.634-.073.17-.196.73-.852.925-1.145.194-.293.389-.244.657-.147.267.098 1.698.802 1.99.948.29.146.485.22.557.34.073.12.073.696-.174 1.392z" fill="#25D366"/></svg>`,
-  telegram: `<svg class="svc-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.04 9.613c-.15.668-.543.83-1.099.517l-3.037-2.237-1.465 1.41c-.162.162-.298.298-.61.298l.218-3.088 5.625-5.082c.244-.218-.054-.338-.379-.12L7.086 14.748l-2.99-.934c-.65-.203-.663-.65.136-.962l11.679-4.504c.541-.196 1.015.132.651.9z" fill="#229ED9"/></svg>`
+  web: '<svg class="svc-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#4A90D9" stroke-width="2"/><ellipse cx="12" cy="12" rx="4" ry="10" stroke="#4A90D9" stroke-width="2"/><path d="M2 12h20" stroke="#4A90D9" stroke-width="2"/></svg>',
+  whatsapp: '<svg class="svc-icon" viewBox="0 0 24 24" fill="none"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.556 4.116 1.526 5.845L0 24l6.335-1.502A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm5.894 16.418c-.247.696-1.443 1.329-1.972 1.374-.53.046-1.018.232-3.438-.716-2.92-1.147-4.795-4.063-4.941-4.252-.146-.19-1.188-1.58-1.188-3.01 0-1.432.748-2.135 1.013-2.428.265-.293.578-.366.77-.366l.554.01c.178.008.418-.067.654.499.247.592.84 2.045.913 2.194.073.148.122.322.024.518-.097.196-.146.318-.293.489-.146.17-.308.38-.44.511-.146.146-.298.304-.128.597.17.293.757 1.247 1.625 2.02 1.116.997 2.057 1.306 2.35 1.452.292.146.463.122.634-.073.17-.196.73-.852.925-1.145.194-.293.389-.244.657-.147.267.098 1.698.802 1.99.948.29.146.485.22.557.34.073.12.073.696-.174 1.392z" fill="#25D366"/></svg>',
+  telegram: '<svg class="svc-icon" viewBox="0 0 24 24" fill="none"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.04 9.613c-.15.668-.543.83-1.099.517l-3.037-2.237-1.465 1.41c-.162.162-.298.298-.61.298l.218-3.088 5.625-5.082c.244-.218-.054-.338-.379-.12L7.086 14.748l-2.99-.934c-.65-.203-.663-.65.136-.962l11.679-4.504c.541-.196 1.015.132.651.9z" fill="#229ED9"/></svg>'
 };
 const SVC_KEYS = ["web","whatsapp","telegram"];
 const BAR_COUNT = 30;
+
+const COUNTDOWN_SEC = 60;
+let countdownVal = COUNTDOWN_SEC;
+let countdownTimer = null;
+let fetching = false;
 
 const $ = (s) => document.querySelector(s);
 
@@ -129,48 +141,64 @@ function render(data) {
   $("#last-updated").textContent = "Last updated: " + formatTime(data.lastUpdated);
 
   const hero = $("#hero");
-  hero.className = "hero " + data.overall;
-  $("#hero-text").textContent =
-    data.overall === "operational" ? "All Systems Operational"
-    : data.overall === "degraded" ? "Some Systems Degraded"
-    : "Some Systems Down";
+  hero.className = "overall-card " + data.overall;
+  if (data.overall === "operational") $("#hero-text").textContent = "All Systems Operational";
+  else if (data.overall === "degraded") $("#hero-text").textContent = "Some Systems Degraded";
+  else $("#hero-text").textContent = "Some Systems Down";
 
   const svcEl = $("#services");
   svcEl.innerHTML = "";
   SVC_KEYS.forEach((key, i) => {
     const svc = data.services[i];
-    const card = document.createElement("div");
-    card.className = "service-card";
-    card.innerHTML = `
-      <div class="svc-left">${ICONS[key]}<span class="svc-name">${svc.name}</span></div>
-      <div class="sparkline" id="sparkline-${key}">${renderBars([...svc.history].slice(-BAR_COUNT))}</div>
-      <div class="svc-right">
-        <div class="uptime">${svc.uptimePercent}%</div>
-        <span class="status-pill ${svc.status}">${svc.status === "operational" ? "Operational" : "Down"}</span>
-      </div>
+    const statusClass = svc.status;
+    const statusText = statusClass === "operational" ? "Operational" : "Down";
+    const row = document.createElement("div");
+    row.className = "service-row";
+    row.innerHTML = `
+      <div class="svc-header">${ICONS[key]}<span class="svc-name">${svc.name}</span><span class="svc-uptime">${svc.uptimePercent}%</span></div>
+      <div class="sparkline">${renderBars([...svc.history].slice(-BAR_COUNT))}</div>
+      <div class="svc-status ${statusClass}"><span class="status-dot"></span>${statusText}</div>
     `;
-    svcEl.appendChild(card);
+    svcEl.appendChild(row);
   });
 }
 
 async function fetchStatus() {
+  if (fetching) return;
+  fetching = true;
   try {
-    const bar = document.createElement("div");
-    bar.className = "checking";
-    document.body.appendChild(bar);
     const res = await fetch("/api/status");
     const data = await res.json();
     render(data);
-    setTimeout(() => bar.remove(), 500);
   } catch (e) {
     console.error("Failed to fetch status:", e);
-    document.querySelectorAll(".checking").forEach((el) => el.remove());
+  } finally {
+    fetching = false;
+    resetCountdown();
   }
 }
 
-// Initial + every 30s
+function resetCountdown() {
+  countdownVal = COUNTDOWN_SEC;
+}
+
+function startCountdown() {
+  if (countdownTimer) clearInterval(countdownTimer);
+  countdownVal = COUNTDOWN_SEC;
+  $("#countdown").textContent = "Next update in " + countdownVal + "s";
+  countdownTimer = setInterval(() => {
+    countdownVal--;
+    if (countdownVal <= 0) {
+      fetchStatus();
+    } else {
+      $("#countdown").textContent = "Next update in " + countdownVal + "s";
+    }
+  }, 1000);
+}
+
+// Initial load + countdown
 fetchStatus();
-setInterval(fetchStatus, 30000);
+startCountdown();
 </script>
 </body>
 </html>

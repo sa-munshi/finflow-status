@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const https = require("https");
 const path = require("path");
 
 const app = express();
@@ -29,8 +28,7 @@ const SERVICES = [
 ];
 
 const MAX_HISTORY = 30;
-const PING_INTERVAL_SEC = 300; // 5 minutes
-const PING_TIMEOUT_MS = 8000;
+const PING_INTERVAL_SEC = 180; // 3 minutes
 
 // ── In-memory store ──
 const serviceState = SERVICES.map((svc) => ({
@@ -38,32 +36,27 @@ const serviceState = SERVICES.map((svc) => ({
   history: [], // [{ timestamp: ISO_string, success: bool }]
 }));
 
-// ── Ping logic ──
-function pingService(url) {
-  return new Promise((resolve) => {
-    try {
-      const parsed = new URL(url);
-      const req = http.get({
-        hostname: parsed.hostname,
-        port: parsed.port || (parsed.protocol === "https:" ? 443 : 80),
-        path: parsed.pathname + parsed.search,
-        timeout: PING_TIMEOUT_MS,
-        headers: { "User-Agent": "FinFlowStatusPinger/1.0" },
-      }, (res) => {
-        // Consume response data to free up memory
-        res.resume();
-        res.on("end", () => resolve(res.statusCode >= 200 && res.statusCode < 400));
-      });
-
-      req.on("timeout", () => {
-        req.destroy();
-        resolve(false);
-      });
-      req.on("error", () => resolve(false));
-    } catch {
-      resolve(false);
-    }
-  });
+// ── Robust ping with redirect follow, custom headers, 30s timeout ──
+async function pingService(url) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      signal: controller.signal,
+      redirect: "follow",
+      headers: {
+        "User-Agent": "FinFlow-StatusPage/1.0",
+        Accept: "*/*",
+      },
+    });
+    clearTimeout(timeout);
+    // Accept 200-403 as "up" (403 = server running but blocking bots)
+    return response.status >= 200 && response.status < 404;
+  } catch {
+    clearTimeout(timeout);
+    return false;
+  }
 }
 
 async function checkAllServices() {
@@ -85,7 +78,7 @@ function buildStatusResponse() {
     const up = svc.history.filter((h) => h.success).length;
     const uptimePercent = total > 0 ? ((up / total) * 100).toFixed(3) : "100.000";
     const lastCheck = svc.history[svc.history.length - 1];
-    const isUp = lastCheck ? lastCheck.success : true; // no check yet → assume up
+    const isUp = lastCheck ? lastCheck.success : true;
 
     return {
       name: svc.displayName,
@@ -102,7 +95,6 @@ function buildStatusResponse() {
   if (allUnchecked) {
     overall = "operational";
   } else if (anyDown) {
-    // Check if some but not all are down
     const allDown = services.every((s) => s.status === "down");
     overall = allDown ? "down" : "degraded";
   } else {
@@ -121,7 +113,7 @@ app.get("/api/status", (_req, res) => {
   res.json(buildStatusResponse());
 });
 
-// Run initial check, then start interval
+// Initial check, then recurring interval
 checkAllServices().then(() => {
   setInterval(checkAllServices, PING_INTERVAL_SEC * 1000);
 });
