@@ -74,6 +74,7 @@ function get24hBars(history) {
   const windowMs = 24 * 60 * 60 * 1000;
   const slotMs = windowMs / 30;
   const bars = [];
+  const partialPcts = [];
 
   for (let i = 29; i >= 0; i--) {
     const slotEnd = now - i * slotMs;
@@ -86,13 +87,22 @@ function get24hBars(history) {
 
     if (checksInSlot.length === 0) {
       bars.push("unknown");
-    } else if (checksInSlot.every(h => h.success)) {
-      bars.push("up");
+      partialPcts.push(null);
     } else {
-      bars.push("down");
+      const upPct = checksInSlot.filter(h => h.success).length / checksInSlot.length;
+      if (upPct === 1) {
+        bars.push("up");
+        partialPcts.push(null);
+      } else if (upPct >= 0.5) {
+        bars.push("partial");
+        partialPcts.push(Math.round(upPct * 100));
+      } else {
+        bars.push("down");
+        partialPcts.push(null);
+      }
     }
   }
-  return bars;
+  return { bars, partialPcts };
 }
 
 // ── Last 24h checks helper ──
@@ -129,7 +139,7 @@ function buildStatusResponse() {
     const uptimePercent = total > 0 ? ((up / total) * 100).toFixed(3) : "100.000";
 
     const history30 = svc.history.slice(-30);
-    const bars24h = get24hBars(svc.history);
+    const { bars, partialPcts } = get24hBars(svc.history);
 
     const lastCheck = svc.history[svc.history.length - 1];
     const isUp = lastCheck ? lastCheck.success : true;
@@ -138,7 +148,8 @@ function buildStatusResponse() {
       name: svc.displayName,
       status: isUp ? "operational" : "down",
       uptimePercent,
-      bars24h,
+      bars24h: bars,
+      _barPcts: partialPcts,
       history: history30,
     };
   });

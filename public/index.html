@@ -40,34 +40,26 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
 .section-title{font-size:16px;font-weight:700;margin-bottom:12px;color:#24292f}
 .svc-card{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border:1px solid #e1e4e8;padding:20px;margin-bottom:14px;transition:translate .3s ease}
 
-/* Service header grid */
-.svc-header{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:8px;margin-bottom:16px}
+/* Service header: icon | name | status pill */
+.service-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
 .svc-icon{width:28px;height:28px;flex-shrink:0}
-.svc-name{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.svc-uptime{font-size:13px;color:#57606a;font-variant-numeric:tabular-nums;justify-self:end}
-.svc-uptime-sub{font-size:10px;color:#8c959f;display:block;margin-top:-2px}
-.svc-status-text{font-size:13px;font-weight:600;display:flex;align-items:center;gap:4px}
-.svc-status-text.operational{color:#1a7f37}
-.svc-status-text.down{color:#cf222e}
-.svc-status-text.checking{color:#57606a}
-.svc-status-text.checking .status-dot{position:relative}
-.svc-status-text.checking .status-dot::after{content:'';position:absolute;inset:0;border-radius:50%;background:inherit;animation:checkPulse 1.5s ease-in-out infinite}
-@keyframes checkPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.6)}}
-.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.svc-status-text.operational .status-dot{background:#1a7f37}
-.svc-status-text.down .status-dot{background:#cf222e}
+.service-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:visible;text-overflow:clip}
+.status-pill{font-size:12px;font-weight:600;display:flex;align-items:center;gap:4px;flex-shrink:0}
+.status-pill.operational{color:#1a7f37}
+.status-pill.down{color:#cf222e}
+.status-pill .status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.status-pill.operational .status-dot{background:#1a7f37}
+.status-pill.down .status-dot{background:#cf222e}
+
+.service-meta{font-size:12px;color:#57606a;margin:2px 0 8px 0}
 
 /* ── Bars ── */
 .bars-container{display:flex;gap:2px;align-items:flex-end;height:44px;margin:12px 0 4px;width:100%;overflow:hidden}
-.spark-bar{flex:1;min-width:4px;max-width:14px;height:100%;border-radius:3px;background:#d0d7de;position:relative;cursor:help;transition:opacity .2s,height .3s,background .3s}
+.spark-bar{flex:1;min-width:4px;max-width:14px;height:100%;border-radius:3px;background:#d0d7de;position:relative;transition:opacity .2s,height .3s,background .3s}
 .spark-bar.up{background:#1a7f37}
+.spark-bar.partial{background:#bf8700}
 .spark-bar.down{background:#cf222e}
 .spark-bar.unknown{background:#d0d7de}
-
-/* Tooltip */
-.spark-bar .tip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;font-size:11px;padding:5px 9px;border-radius:6px;white-space:nowrap;z-index:10;pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,.18);line-height:1.4}
-.spark-bar .tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1f2937}
-.spark-bar:hover .tip{display:block}
 
 /* Axis labels */
 .axis-row{display:flex;justify-content:space-between;padding:0 0 0 0;font-size:11px;color:#57606a;margin-top:4px}
@@ -111,7 +103,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
   .header{margin-left:-24px;margin-right:-24px}
   .hero{padding:40px}
   .hero-text{font-size:28px}
-  .svc-header{grid-template-columns:32px 1fr auto auto}
   .svc-icon{width:32px;height:32px}
 }
 
@@ -134,9 +125,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f6f8fa;c
   .hero-text{font-size:18px}
   .hero-sub{font-size:13px}
   .svc-card{padding:16px}
-  .svc-header{grid-template-columns:28px 1fr auto 120px}
   .bars-container{height:36px;margin:10px 0 2px}
-  .spark-bar .tip{display:none !important}
   .fab-subscribe{bottom:16px;right:16px;padding:12px 18px;font-size:13px}
   /* Mobile modal as bottom sheet */
   .modal-overlay{padding:0;align-items:flex-end;justify-content:stretch}
@@ -226,16 +215,6 @@ let fetching = false;
 
 const $ = (s) => document.querySelector(s);
 
-function formatTimeFull(iso) {
-  const d = new Date(iso);
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const mo = months[d.getMonth()];
-  const day = d.getDate();
-  const hh = d.getHours().toString().padStart(2,'0');
-  const mm = d.getMinutes().toString().padStart(2,'0');
-  return `${mo} ${day}, ${hh}:${mm}`;
-}
-
 function formatLastUpdated(iso) {
   const d = new Date(iso);
   const h = d.getHours().toString().padStart(2,'0');
@@ -247,30 +226,81 @@ function formatLastUpdated(iso) {
   return `Last updated: ${h}:${m}:${s} \u00b7 ${mo} ${day}`;
 }
 
-function formatSlotTime(slotIndex) {
-  // slot 0 = 24h ago, slot 29 = now; each slot = 48 min
-  const now = new Date();
-  const slotMs = (24 * 60 * 60 * 1000) / 30;
-  const slotEnd = new Date(now.getTime() - (29 - slotIndex) * slotMs);
-  const slotStart = new Date(slotEnd.getTime() - slotMs);
-  const hh = (d) => d.getHours().toString().padStart(2, '0');
-  const mm = (d) => d.getMinutes().toString().padStart(2, '0');
-  return `~${hh(slotStart)}:${mm(slotStart)}\u2013${hh(slotEnd)}:${mm(slotEnd)}`;
+function encodeServiceName(name) {
+  return encodeURIComponent(name);
 }
 
 function renderBars24h(bars24h) {
-  return bars24h.map((slot, i) => {
-    let cls = 'unknown';
-    let result = 'No data';
-    if (slot === 'up') { cls = 'up'; result = 'Operational'; }
-    else if (slot === 'down') { cls = 'down'; result = 'Down'; }
-    const tip = `<span class="tip">${formatSlotTime(i)} &middot; ${result}</span>`;
-    return `<div class="spark-bar ${cls}">${tip}</div>`;
-  }).join("");
-}
+  const slotMins = 48;
+  const fmt = d => d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
 
-function encodeServiceName(name) {
-  return encodeURIComponent(name.replace(/ /g, " "));
+  const container = document.createElement('div');
+  container.className = 'bars-container';
+
+  bars24h.forEach((slot, index) => {
+    const bar = document.createElement('div');
+    bar.className = 'spark-bar';
+
+    let tipData = '';
+    if (slot === 'up') {
+      bar.classList.add('up');
+      const slotEnd = new Date(Date.now() - (29 - index) * slotMins * 60000);
+      const slotStart = new Date(slotEnd.getTime() - slotMins * 60000);
+      tipData = `${fmt(slotStart)}\u2013${fmt(slotEnd)} \u00b7 \u2713 Operational`;
+    } else if (slot === 'partial') {
+      bar.classList.add('partial');
+      const slotEnd = new Date(Date.now() - (29 - index) * slotMins * 60000);
+      const slotStart = new Date(slotEnd.getTime() - slotMins * 60000);
+      const pct = bars24h._pct ? bars24h._pct[index] : '?';
+      tipData = `${fmt(slotStart)}\u2013${fmt(slotEnd)} \u00b7 \u26a0 Partial (${pct} up)`;
+    } else if (slot === 'down') {
+      bar.classList.add('down');
+      const slotEnd = new Date(Date.now() - (29 - index) * slotMins * 60000);
+      const slotStart = new Date(slotEnd.getTime() - slotMins * 60000);
+      tipData = `${fmt(slotStart)}\u2013${fmt(slotEnd)} \u00b7 \u2717 Down`;
+    } else {
+      bar.classList.add('unknown');
+      tipData = 'No data yet';
+    }
+
+    bar.style.cursor = 'pointer';
+    bar.style.webkitTapHighlightColor = 'transparent';
+
+    bar.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const existing = document.getElementById('bar-tip');
+      if (existing) existing.remove();
+
+      const tip = document.createElement('div');
+      tip.id = 'bar-tip';
+      tip.textContent = tipData;
+      tip.style.cssText = `
+        position:fixed; background:#24292f; color:#fff;
+        padding:6px 10px; border-radius:6px; font-size:12px;
+        z-index:9999; pointer-events:none; white-space:nowrap;
+        box-shadow:0 2px 8px rgba(0,0,0,0.4);
+      `;
+      document.body.appendChild(tip);
+
+      const r = bar.getBoundingClientRect();
+      tip.style.left = Math.min(
+        Math.max(8, r.left - tip.offsetWidth / 2 + r.width / 2),
+        window.innerWidth - tip.offsetWidth - 8
+      ) + 'px';
+      tip.style.top = (r.top - tip.offsetHeight - 8 + window.scrollY) + 'px';
+
+      setTimeout(() => tip.remove(), 3000);
+    });
+
+    container.appendChild(bar);
+  });
+
+  document.addEventListener('click', () => {
+    const t = document.getElementById('bar-tip');
+    if (t) t.remove();
+  });
+
+  return container;
 }
 
 function render(data) {
@@ -302,16 +332,33 @@ function render(data) {
     const card = document.createElement("div");
     card.className = "svc-card";
     card.innerHTML = `
-      <div class="svc-header">
-        ${ICONS[key]}
-        <span class="svc-name">${svc.name}</span>
-        <span class="svc-uptime">${svc.uptimePercent}%<span class="svc-uptime-sub">(24h)</span></span>
-        <span class="svc-status-text ${statusClass}"><span class="status-dot"></span>${statusText}</span>
+      <div class="service-top">
+        <span class="svc-icon">${ICONS[key]}</span>
+        <div style="flex:1;min-width:0">
+          <span class="service-name">${svc.name}</span>
+        </div>
+        <span class="status-pill ${statusClass}"><span class="status-dot"></span>${statusText}</span>
       </div>
-      <div class="bars-container">${renderBars24h(svc.bars24h)}</div>
-      <div class="axis-row"><span>24 hours ago</span><span>Now</span></div>
-      <a href="${historyUrl}" style="font-size:12px;color:#57606a;text-decoration:none;display:block;text-align:right;margin-top:4px;">View 90-day history &rarr;</a>
+      <div class="service-meta">${svc.uptimePercent}% (24h)</div>
     `;
+
+    // Insert bars, then axis row, then history link
+    const barsWithPcts = svc.bars24h.slice();
+    barsWithPcts._pct = svc._barPcts || [];
+    const barsContainer = renderBars24h(barsWithPcts);
+    card.appendChild(barsContainer);
+
+    const axisRow = document.createElement('div');
+    axisRow.className = 'axis-row';
+    axisRow.innerHTML = '<span>24 hours ago</span><span>Now</span>';
+    card.appendChild(axisRow);
+
+    const link = document.createElement('a');
+    link.href = historyUrl;
+    link.style.cssText = 'font-size:12px;color:#57606a;text-decoration:none;display:block;text-align:right;margin-top:4px;';
+    link.textContent = 'View 90-day history \u2192';
+    card.appendChild(link);
+
     svcEl.appendChild(card);
   });
 }
