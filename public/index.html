@@ -153,6 +153,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f0f2f5;c
       <p class="modal-desc">Be the first to know when FinFlow services go down or recover. No spam — only real incidents.</p>
       <form id="modal-sub-form">
         <input class="modal-input" id="modal-input" type="email" placeholder="you@example.com" required autocomplete="email">
+        <div id="modal-error" style="color:#cf222e;font-size:13px;min-height:20px;margin-bottom:4px;text-align:left"></div>
         <button class="modal-submit-btn" type="submit" id="modal-btn">Subscribe</button>
       </form>
     </div>
@@ -362,8 +363,11 @@ document.addEventListener("keydown", (e) => { if (e.key === "Escape" && overlay.
 modalForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = modalInput.value.trim();
+  const errorEl = document.getElementById("modal-error");
+  errorEl.textContent = "";
 
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!email || email.length > 254 || email.split("@").length !== 2 || !email.split("@")[0] || !email.split("@")[1] || !email.split("@")[1].includes(".")) {
+    errorEl.textContent = "Please enter a valid email address.";
     return;
   }
 
@@ -381,9 +385,11 @@ modalForm.addEventListener("submit", async (e) => {
       formView.style.display = "none";
       successView.style.display = "block";
       successEmail.textContent = `We'll notify you at ${email} when anything changes.`;
+    } else {
+      errorEl.textContent = data.message || "Subscription failed. Please try again.";
     }
   } catch {
-    // silently fail
+    errorEl.textContent = "Network error. Please try again.";
   } finally {
     modalBtn.disabled = false;
     modalBtn.textContent = "Subscribe";
