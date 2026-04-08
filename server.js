@@ -25,12 +25,12 @@ const SERVICES = [
   {
     id: "whatsapp",
     displayName: "FinFlow WhatsApp",
-    url: "https://finflow-whatsapp-c1rc.onrender.com/",
+    url: "https://whatsapp-finflow.onrender.com/",
   },
   {
     id: "telegram",
     displayName: "FinFlow Telegram",
-    url: "https://bot-finflow.onrender.com/",
+    url: "https://telegram-finflow.onrender.com/",
   },
 ];
 
