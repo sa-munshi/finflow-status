@@ -30,7 +30,7 @@ const SERVICES = [
   {
     id: "telegram",
     displayName: "FinFlow Telegram",
-    url: "https://https://tg.sadabmunshi.online/",
+    url: "https://tg.sadabmunshi.online/",
   },
 ];
 
